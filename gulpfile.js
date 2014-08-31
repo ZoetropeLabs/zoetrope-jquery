@@ -172,7 +172,7 @@ gulp.task('less', ['htc'], function () {
 		.pipe(size({
 			showFiles: true
 		}))
-		.pipe(rename('style-dev.min.css'))
+		.pipe(rename(module_name+'.min.css'))
 		.pipe(gulp.dest(paths.dist + '/css'))
 		.pipe(gzip())
 		.pipe(size({
