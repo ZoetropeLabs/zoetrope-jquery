@@ -1,2 +1,3 @@
 //ignore distributions (normally)
 dist/*
+npm-debug.log
