@@ -1,3 +1,6 @@
 //ignore distributions (normally)
 dist/*
 npm-debug.log
+
+//we can get this everytime
+lib/detectmobilebrowser.js
