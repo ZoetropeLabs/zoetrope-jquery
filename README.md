@@ -1,7 +1,11 @@
 # Zoetrope Jquery
 
 ## Introduction
-This repo contains the source for [Zoetrope's](http://zoetrope.io) 3D photography widget. The vast majority of users will not need to use this
+This repo contains the source for [Zoetrope's](http://zoetrope.io) 3D photography widget. The vast majority of users will not need to use this directly, since a prebuilt copy is served directly from the Zoetrope CDN.
+
+This is aimed at helping our clients to develop new and interesting product imaging experiences.
+
+We are aware how bad the documentation is - please bare with us :)
 
 ## Instalation
 
