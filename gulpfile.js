@@ -84,7 +84,7 @@ var keenKeys = {
 var replacements = [
 	['{{branch}}', gitBranch],
 	['{{cdn:url}}', cdns[gitBranch]],
-	['{{cdn:base}}', cdns['v1'] + 'v1'],
+	['{{cdn:base}}', '.'],
 	['{{image-cdn:url}}', cdns.v1],
 	['{{keen-project-id}}', keenKeys.project[gitBranch]],
 	['{{keen-write-key}}', keenKeys.write[gitBranch]]
