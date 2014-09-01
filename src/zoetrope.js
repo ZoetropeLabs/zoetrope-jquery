@@ -432,7 +432,7 @@
 											//start from the startingPosition, so that animation can begine ASAP
 											ret_index = arrSlice.indexOf(null, state.preload.col);
 											if( ret_index === -1){
-												ret_index = arrSlice.indexOf(null);
+												ret_index = $.inArray(null, arrSlice);
 											}
 											if( ret_index !== -1){
 												ret_index = ret_index + rowChoice*state.colCount;
@@ -897,6 +897,12 @@
 									}
 								},
 
+								// IE fix
+								dragstart : function(e){
+									if($(e.target).hasClass(zoe.cls.frame))
+										return false;
+								},
+
 							},
 							window:{
 								resize : function(){
@@ -1060,7 +1066,7 @@
 		}
 		ret = elemData || init;
 
-		if(type === 'enum' && options.indexOf(ret) == -1)
+		if(type === 'enum' && $.inArray(ret, options) === -1)
 			error('the setting '+key+' is needs to be one of '+options);
 
 
