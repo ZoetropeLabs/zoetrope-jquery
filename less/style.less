@@ -161,7 +161,8 @@ a.@{pre}engage-trigger img {
 		cursor: pointer;
 		.hide-text;
 		.no-select;
-		.background-square(@button-size);
+		background-size: @button-size @button-size;
+		-ms-behavior: url({{cdn:base}}/css/backgroundsize.min.htc);
 	}
 
 	.@{pre}btn-zoom{
@@ -212,6 +213,7 @@ a.@{pre}engage-trigger img {
 		height:80%;
 		.border-radius;
 		overflow: hidden;
+		z-index: 4;
 	}
 
 	.@{pre}help-triangle{
@@ -255,6 +257,7 @@ a.@{pre}engage-trigger img {
 		width: 100%;
 		display: block;
 		.hide-text();
+		.background-square(100%);
 	}
 
 	.@{pre}help-text{
@@ -270,20 +273,16 @@ a.@{pre}engage-trigger img {
 	}
 
 	.@{pre}help-rotate .@{pre}help-image{
-		background-image: url(../img/svg/rotate.svg);
-		.background-square(100%);
+		background-image: url(../img/rotate.png);
 	}
 	.@{pre}help-elevate .@{pre}help-image{
-		background-image: url(../img/svg/elevate.svg);
-		.background-square(100%);
+		background-image: url(../img/elevate.png);
 	}
 	.@{pre}help-zoom .@{pre}help-image{
-		background-image: url(../img/svg/zoom.svg);
-		.background-square(100%);
+		background-image: url(../img/zoom.png);
 	}
 	.@{pre}help-brand .@{pre}help-image{
-		background-image: url(../img/svg/zoetrope.svg);
-		.background-square(100%);
+		background-image: url(../img/zoetrope.png);
 	}
 	.@{pre}help-brand a{
 		font-size: 14px;
@@ -306,7 +305,7 @@ a.@{pre}engage-trigger img {
 	.@{pre}progress-z{
 		width: 100%;
 		height: 100%;
-		background-image: url(../img/svg/progress.svg);
+		background-image: url(../img/progress.png);
 		.background-shape(100%, auto);
 		background-position: center bottom;
 	}
