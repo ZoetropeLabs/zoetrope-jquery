@@ -81,12 +81,12 @@
 			frame: pre+'frame',
 			frameIndicator: pre+'frame-',
 
-			zboxOuter : pre+'zbox-outer',
+			zboxOuter : pre+'zbox-outer'
 		},
 
 		id :{
 			zboxOverlay : pre+'zbox-overlay',
-			zboxContent : pre+'zbox-content',
+			zboxContent : pre+'zbox-content'
 		},
 
 		html:{
@@ -97,14 +97,14 @@
 					<div class="<%=zoe.cls.helpPointer%>"></div> \
 					<div class="<%=zoe.cls.helpWrapper%>"> \
 						<% for(var i=0; i < obj.sections.length; i++){ %> \
-							<div class="<%=zoe.cls.helpTile%> <%=obj.sections[i].class%>"> \
+							<div class="<%=zoe.cls.helpTile%> <%=obj.sections[i][\'class\']%>"> \
 								<div class="<%=zoe.cls.helpSpacer%>"> </div> \
 								<div class="<%=zoe.cls.helpSection%>"> \
 									<div class="<%=zoe.cls.helpColumnPad%>"> </div> \
 									<% if(typeof obj.sections[i].image !== "undefined") { %> \
 										<%=obj.sections[i].image %>\
 									<% } else { %>\
-										<div class="<%=zoe.cls.helpImage%>"></div> \
+										<div class="<%=zoe.cls.helpImage%>"> </div> \
 									<% } %>\
 									<div class="<%=zoe.cls.helpText%>"><%=obj.sections[i].text%></div> \
 								</div> \
@@ -123,7 +123,7 @@
 							<div class="<%=zoe.cls.triggerCta%>"><span>&nbsp;</span><%=zoe.strs.inlineCallToAction[$.browser.mobile ? "mobile" : "desktop"]%></div>\
 						</div>',
 			zboxOverlay : '<div id="<%=zoe.id.zboxOverlay%>">&nbsp;</div>',
-			zboxContent : '<div class="<%=zoe.cls.zboxOuter%>"><div id="<%=zoe.id.zboxContent%>"></div></div>',
+			zboxContent : '<div class="<%=zoe.cls.zboxOuter%>"><div id="<%=zoe.id.zboxContent%>"></div></div>'
 		},
 
 		// language strings, `strs` will contain the active language
@@ -149,7 +149,7 @@
 			'cdn' : {type: 'string', init: '{{image-cdn:url}}'},
 			'break' : {type: 'number', init: 2500},
 			'lang': {type: 'string', process: false, init: (window.navigator.userLanguage || window.navigator.language)},
-			'size' : {type: 'enum', init: 0, options:[0,250,500,1000]},
+			'size' : {type: 'enum', init: 0, options:[0,250,500,1000]}
 		},
 
 		// The initial state of the element
@@ -174,7 +174,7 @@
 			preloadStartTime : 0, // start time for end time estimation
 			progressPercentage : 0, //set separately for the progress bar
 			progressMax : false, // the frame to use as 100% on the preload
-			loaded : false,
+			loaded : false
 		},
 
 		//pool for binding events to
@@ -430,9 +430,9 @@
 											var rowChoice = (state.preload.row + i) % 3;
 											var arrSlice = state.frames.slice(rowChoice*state.colCount, (rowChoice+1)*state.colCount);
 											//start from the startingPosition, so that animation can begine ASAP
-											ret_index = arrSlice.indexOf(null, state.preload.col);
+											ret_index = $.inArray(null, arrSlice, state.preload.col);
 											if( ret_index === -1){
-												ret_index = arrSlice.indexOf(null);
+												ret_index = $.inArray(null, arrSlice);
 											}
 											if( ret_index !== -1){
 												ret_index = ret_index + rowChoice*state.colCount;
@@ -616,6 +616,8 @@
 									var top = $this.find(dot(pre+'btn-help')).offset().top - $this.find(dot(zoe.cls.buttonArea)).offset().top;
 									$this.find(dot(zoe.cls.helpPointer)).css('top', top);
 									$help.fadeIn();
+									//Odd IE quirk that needs to reevaluate CSS
+									$(dot(zoe.cls.helpImage), $help).attr('id', 'background-update');
 								},
 
 								helpEnd: function(){
@@ -783,7 +785,7 @@
 									if(!state.resizeUpdated) return;
 									state.resizeUpdated = false;
 									$this.height($this.outerWidth());
-								},
+								}
 							},
 
 							// Events bound to the lightbox aspects - if required.
@@ -820,7 +822,7 @@
 									$('embed.unhideThis, object.unhideThis').removeClass(zoe.cls.overlayUnhide).css('visibility', 'visible');
 									//make a copy of the original ready for another open
 									$this = $original.clone(true);
-								},
+								}
 							},
 
 							//pool events are bound to the page
@@ -897,12 +899,18 @@
 									}
 								},
 
+								// IE fix
+								dragstart : function(e){
+									if($(e.target).hasClass(zoe.cls.frame))
+										return false;
+								}
+
 							},
 							window:{
 								resize : function(){
 									$this.trigger('zoetropeResize');
 								},
-							},
+							}
 
 						}
 
@@ -936,7 +944,7 @@
 		//ticker is the global ticker
 		ticker : null,
 		//template Cache
-		tpl_cache : {},
+		tpl_cache : {}
 	};
 
 
@@ -1060,7 +1068,7 @@
 		}
 		ret = elemData || init;
 
-		if(type === 'enum' && options.indexOf(ret) == -1)
+		if(type === 'enum' && $.inArray(ret, options) === -1)
 			error('the setting '+key+' is needs to be one of '+options);
 
 
@@ -1115,29 +1123,33 @@
 
 	//templating engine - http://ejohn.org/blog/javascript-micro-templating
 	function tmpl(str, data){
-	// Figure out if we're getting a template, or if we need to
-	// load the template - and be sure to cache the result.
-	var fn = zoe.tpl_cache[str] = zoe.tpl_cache[str] ||
+		// Figure out if we're getting a template, or if we need to
+		// load the template - and be sure to cache the result.
+		var fn = zoe.tpl_cache[str];
 
-		// Generate a reusable function that will serve as a template
-		// generator (and which will be cached).
-			new Function("obj, zoe, $",
-			"var p=[],print=function(){p.push.apply(p,arguments);};" +
+		if(typeof fn === 'undefined'){
+			// Generate a reusable function that will serve as a template
+			// generator (and which will be cached).
+			fn = new Function("obj, zoe, $",
+				"var p=[],print=function(){p.push.apply(p,arguments);};" +
 
-			// Introduce the data as local variables using with(){}
-			"p.push('" +
+				// Introduce the data as local variables using with(){}
+				"p.push('" +
 
-			// Convert the template into pure JavaScript
-			str
-			  .replace(/[\r\t\n]/g, " ")
-			  .split("<%").join("\t")
-			  .replace(/((^|%>)[^\t]*)'/g, "$1\r")
-			  .replace(/\t=(.*?)%>/g, "',$1,'")
-			  .split("\t").join("');")
-			  .split("%>").join("p.push('")
-			  .split("\r").join("\\'")
-			+ "'); return p.join('');");
+				// Convert the template into pure JavaScript
+				str
+				  .replace(/[\r\t\n]/g, " ")
+				  .split("<%").join("\t")
+				  .replace(/((^|%>)[^\t]*)'/g, "$1\r")
+				  .replace(/\t=(.*?)%>/g, "',$1,'")
+				  .split("\t").join("');")
+				  .split("%>").join("p.push('")
+				  .split("\r").join("\\'")
+				+ "'); return p.join('');"
+			);
 
+			zoe.tpl_cache[str] = fn;
+		}
 		// Provide some basic currying to the user
 		return $(fn(data || {}, zoe, $));
 	};
