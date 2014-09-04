@@ -17,6 +17,8 @@
     "gulp-debug": "~0.2.0",
     "gulp-docco": "0.0.4",
     "gulp-download": "0.0.1",
+    "gulp-exec": "^2.1.0",
+    "gulp-file-insert": "~1.0.2",
     "gulp-gzip": "0.0.4",
     "gulp-karma": "0.0.4",
     "gulp-less": "~1.2.1",
@@ -37,8 +39,7 @@
     "simple-glob": "^0.1.0",
     "through2": "^0.4.1",
     "webdriverjs": "",
-    "winston": "^0.7.3",
-    "gulp-file-insert": "~1.0.2"
+    "winston": "^0.7.3"
   },
   "scripts": {
     "preinstall": "npm i -g gulp grunt grunt-cli protractor docco"
