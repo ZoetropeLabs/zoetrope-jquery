@@ -25,6 +25,8 @@ var fs = require('fs'),
 	through = require('through2'),
 	docco = require("gulp-docco"),
 	gfi = require('gulp-file-insert');
+	exec = require('gulp-exec');
+
 
 var port = '8888';
 
@@ -56,6 +58,7 @@ var paths = {
 	languageStringsCSV: 'https://docs.google.com/spreadsheets/d/1y5McuTIe4G7F0xKM6JPm6STRKOHxE1G2IkDMiSxSeKo/export?format=csv&id=1y5McuTIe4G7F0xKM6JPm6STRKOHxE1G2IkDMiSxSeKo&gid=52872048',
 	mobileDetect: 'http://detectmobilebrowsers.com/download/jquery',
 	dist: 'dist/' + gitBranch,
+	keen: 'lib/keen',
 };
 
 var module_name = "zoetrope.jquery";
@@ -265,7 +268,7 @@ gulp.task('detect-mobile', function(){
 	return download(paths.mobileDetect)
 		.pipe(rename('detectmobilebrowser.js'))
 		.pipe(gulp.dest('lib'));
-})
+});
 
 gulp.task('html', function () {
 	return gulp.src(paths.testHTML)
@@ -322,7 +325,7 @@ gulp.task('test', ['default'], function () {
 	);
 
 	return Q.allSettled([spawnConcurrentProcess(children.mobile),
-						 spawnConcurrentProcess(children.desktop)])
+						spawnConcurrentProcess(children.desktop)])
 		.spread(function(mob, desk) {
 				gutil.log("Mobile Testing: ", mob.state === "fulfilled");
 				gutil.log("Desktop Testing: ", desk.state === "fulfilled");
@@ -382,11 +385,17 @@ gulp.task('watch', ['default'], function () {
 	gulp.watch('less/*', ['less']);
 });
 
+gulp.task('build-keen', function() {
+	exec('cd lib/keen; grunt', function(err,stdout,stderr) {
+		console.log(stderr);
+	});
+});
+
 
 // Get some language strings etc
 gulp.task('fetch', ['lang-strings', 'detect-mobile']);
 
 // The default task (called when you run `gulp` from cli)
-gulp.task('default', ['less', 'javascript', 'html']);
+gulp.task('default', ['fetch', 'build-keen', 'less', 'javascript', 'html']);
 
 
