@@ -119,7 +119,7 @@
 				<div class="zoe-progress-z <%=zoe.cls.progress%>">&nbsp;</div> \
 				</div>',
 			cta : '<div class="<%=zoe.cls.cta%>"><%=zoe.strs.callToAction[$.browser.mobile ? "mobile" : "desktop"]%></div>',
-			zboxTrigger : '<div class="<%=zoe.cls.trigger%>">\
+			trigger : '<div class="<%=zoe.cls.trigger%>">\
 							<div class="<%=zoe.cls.triggerCta%>"><span>&nbsp;</span><%=zoe.strs.inlineCallToAction[$.browser.mobile ? "mobile" : "desktop"]%></div>\
 						</div>',
 			zboxOverlay : '<div id="<%=zoe.id.zboxOverlay%>">&nbsp;</div>',
@@ -257,12 +257,24 @@
 								if(get('inline')){
 									$this.wrap($wrapper);
 									$this = $this.parent();
+
+									if(!get('preload')){
+										var $trigger = tmpl(zoe.html.trigger);
+										//insert the trigger markup
+										$this.before($trigger);
+										$trigger.prepend($this);
+										$trigger.on('click', function(){
+											$trigger.before($this);
+											$trigger.remove();
+											$this.trigger('setup');
+										})
+									}
 								}
 								// Load in zbox
 								else{
 
 									// Add trigger wrapper
-									var $trigger = tmpl(zoe.html.zboxTrigger);
+									var $trigger = tmpl(zoe.html.trigger);
 									//insert the trigger markup
 									$this.before($trigger);
 									$trigger.prepend($this);
@@ -305,7 +317,7 @@
 									$this.on(evns(key, 'analytics'), ev);
 								})
 
-								if(get('inline')){
+								if(get('inline') && get('preload')){
 									$this.trigger('setup');
 								}
 
@@ -415,9 +427,13 @@
 									function getNextIndex(state){
 
 										if(typeof state.preload === 'undefined'){
+											var startPosition = get('startPosition'),
+												col = (startPosition % 36) * 10,
+												row = floor(startPosition / 36) * 30;
+
 											state.preload = {
-												col: floor(state.col/(360 / state.colCount)),
-												row: state.row*(90/state.rowCount),
+												col: floor(col/(360 / state.colCount)),
+												row: row*(90/state.rowCount),
 											};
 										}
 										var ret_index;
@@ -1066,7 +1082,7 @@
 			case 'string' : init = init || ''; break;
 			case 'enum' : init = init || options[0]; break;
 		}
-		ret = elemData || init;
+		ret = typeof elemData !== 'undefined' ? elemData : init;
 
 		if(type === 'enum' && $.inArray(ret, options) === -1)
 			error('the setting '+key+' is needs to be one of '+options);
