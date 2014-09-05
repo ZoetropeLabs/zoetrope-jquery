@@ -633,7 +633,7 @@
 									$this.find(dot(zoe.cls.helpPointer)).css('top', top);
 									$help.fadeIn();
 									//Odd IE quirk that needs to reevaluate CSS
-									$(dot(zoe.cls.helpImage), $help).attr('id', 'background-update');
+									$(dot(zoe.cls.helpImage), $help).attr('data-id', 'background-update');
 								},
 
 								helpEnd: function(){
@@ -718,7 +718,7 @@
 									$zoomDiv.on(evns('mousedown', 'capture'), capture);
 
 									//move to the buttons zoom position
-									$this.trigger('zoomMove', [offset.left + size/2, offset.top + size/2, true]);
+									$this.trigger('zoomMove', [size/2, size/2, true]);
 
 									state.zoomed = true;
 
