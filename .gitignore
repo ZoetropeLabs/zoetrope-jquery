@@ -4,3 +4,5 @@ npm-debug.log
 
 //we can get this everytime
 lib/detectmobilebrowser.js
+
+node_modules
