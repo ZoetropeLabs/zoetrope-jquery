@@ -855,7 +855,7 @@
 
 										//animation setup
 										$newFrame.hide();
-										$oldFrame.finish();
+										$oldFrame.stop(true, true);
 										$this.prepend($newFrame);
 										state.blittedFrameIndex = displayIndex;
 
