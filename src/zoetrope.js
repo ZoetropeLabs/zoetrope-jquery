@@ -289,33 +289,9 @@
 									$original = $this.clone(true);
 								}
 
-								// Init the instances state
-								var state = set('state', $.extend(true, {}, zoe.initState)),
-									startPosition = get('startPosition'); //start position needs to be set from the settings
-
-								//Choose an image size - accounts for mobile
-								// Sometimes size will be forced by the viewer options
-								if(!get('size')){
-									$this.data('size', imageSize());
-								}
-
-								// Mobile mode?
-								if($.browser.mobile){
-									state.colCount = 18; //half images
-									zoe.fps = 10; // reduce frame rate (less than 1/3rd of normal)
-								}
-
-								// take frame and work out angle
-								state.col = (startPosition % 36) * 10;
-								state.row = floor(startPosition / 36) * 30;
 
 								//bind all instance handlers
 								$this.on(on.instance);
-								// bind analytics
-								var analytics_events = zoe.analytics(get);
-								$.each(analytics_events, function(key, ev){
-									$this.on(evns(key, 'analytics'), ev);
-								})
 
 								if(get('inline') && get('preload')){
 									$this.trigger('setup');
@@ -335,10 +311,36 @@
 								// Does most of the setup, following from on.setup()
 								// Creates the actual reel
 								setup : function(){
+									// Init the instances state
+									var state = set('state', $.extend(true, {}, zoe.initState)),
+										startPosition = get('startPosition'); //start position needs to be set from the settings
+
+									//Choose an image size - accounts for mobile
+									// Sometimes size will be forced by the viewer options
+									if(!get('size')){
+										$this.data('size', imageSize());
+									}
+
+									// Mobile mode?
+									if($.browser.mobile){
+										state.colCount = 18; //half images
+										zoe.fps = 10; // reduce frame rate (less than 1/3rd of normal)
+									}
+
+									// take frame and work out angle
+									state.col = (startPosition % 36) * 10;
+									state.row = floor(startPosition / 36) * 30;
 									//bind global stuff
 									addInstance($this);
 									zoe.pool.on(on.pool);
 									$(window).on(on.window);
+
+									// bind analytics
+									var analytics_events = zoe.analytics(get);
+									$.each(analytics_events, function(key, ev){
+										$this.on(evns(key, 'analytics'), ev);
+									})
+
 									$this.trigger('zoetropeResize');
 									$this.trigger('preload');
 
@@ -825,6 +827,11 @@
 									$zboxOverlay.css('display','block').fadeIn(200, 0.6);
 									$zboxContent.append($this);
 									$zboxOverlay.one('click', function(){ on.zbox.close(); });
+
+									//attach events if required
+									if(!$._data($this[0], 'events'))
+											$this.on(on.instance);
+
 
 									$this.trigger('setup');
 								},
