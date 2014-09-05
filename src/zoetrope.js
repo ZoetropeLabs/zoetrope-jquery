@@ -697,7 +697,7 @@
 								zoomStart: function(){
 									var state = get('state'),
 										$zoomDiv = $this.find(dot(zoe.cls.zoom)),
-										zoomUrl = getZoomSrc(state.blittedFrameIndex)
+										zoomUrl = getZoomSrc(state.blittedFrameIndex),
 										offset = $this.offset(),
 										size = $this.outerWidth();
 
@@ -722,7 +722,7 @@
 
 									state.zoomed = true;
 
-									function move(e){ $this.trigger('zoomMove', [pointer(e).clientX - offset.left, pointer(e).clientY - offset.top, e]); return false;}
+									function move(e){ var offset = $this.offset(); $this.trigger('zoomMove', [pointer(e).pageX - offset.left, pointer(e).pageY - offset.top, e]); return false;}
 									function leave(){ $this.trigger('zoomLeave'); return false; }
 									function enter(){ $this.trigger('zoomEnter'); return false; }
 									function capture(){ return false;}
