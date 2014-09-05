@@ -572,21 +572,23 @@
 										state.lastPanCursor.x = x;
 										//column change
 										var change = delta.x / (width/(360)),
-											newCol = state.col + change;
-										// add 36 to prevent it ever going negative
-										state.col = (newCol + 360) % 360;
+											// add 36 to prevent it ever going negative
+											newCol = (state.col + change + 360) % 360;
+										state.col = newCol;
 
 										// update for velocity calcs
 										state.delta_cursor.push(delta.x)
 										state.delta_cursor.shift()
 									}
 									if (abs_delta.y > 0){
-										ev && (ev.give = false);
 										state.lastPanCursor.y = y;
 										//row change
-										var change = delta.y / (width/100),
-											newRow = state.row + change;
-										state.row = min_max(0, 90, newRow);
+										var change = delta.y / (width/250),
+											newRow = min_max(0, 90, state.row + change);
+										//pass on the event if no change (helps with page scrolling)
+										if(newRow != state.row)
+											ev && (ev.give = false);
+										state.row =  newRow;
 									}
 								},
 
