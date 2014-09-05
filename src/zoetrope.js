@@ -515,8 +515,11 @@
 								// down psudeo event, which fired by either mousedown or touchstart
 								down : function(e, x, y, ev){
 									var state = get('state');
-									$this.stop();
+									$this.stop(true);
 									if(state.idleTimeout) clearTimeout(state.idleTimeout);
+
+									//make sure buttons come in when we start doing stuff
+									$this.trigger('showButtons');
 
 									state.interactive = true;
 									state.lastPanCursor = {x:x, y:y};
