@@ -205,7 +205,7 @@
 				if(!zoeCompatible()) return;
 
 				var $this = $(this),
-					$applicable = $this.filter('img:not('+dot(zoe.cls.processed)+')').each(function(){
+					$applicable = $this.filter('img:not('+dot(zoe.cls.processed)+')[data-zoe-image]').each(function(){
 						var $this = $(this),
 							//cache original markup
 							$original = $this.clone(),
@@ -379,6 +379,7 @@
 											}
 											$btn.data(oddClickName, !$btn.data(oddClickName));
 										});
+										$buttonArea.hide()
 										$buttonArea.find(dot(zoe.cls.buttonArea)).append($btn);
 										// jQuery adds 'style="display:inline;' for some reason, but we really don't want that
 										$btn.removeAttr('style');
@@ -487,6 +488,7 @@
 												$this.trigger('progressHide');
 												$this.animate({zoetropeColDelta:360}, get('loadspinLength'),function(){
 													if(get('showCta')) $this.trigger('showCta');
+													$this.trigger('showButtons');
 												});
 											}, startSpinner);
 									}
@@ -505,6 +507,9 @@
 									var state = get('state');
 									state.loaded = true;
 									$this.trigger('progressHide');
+									if(!get('loadspin')){
+										$this.trigger('showButtons');
+									}
 								},
 
 								// down psudeo event, which fired by either mousedown or touchstart
@@ -598,6 +603,11 @@
 											$markup.remove();
 										});
 									});
+								},
+
+								showButtons : function(){
+									$this.find(dot(zoe.cls.buttonHotSpot)).fadeIn(200);
+									$this.off('showButtons');
 								},
 
 								helpSetup: function(){
