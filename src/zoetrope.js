@@ -80,7 +80,7 @@
 			newFrame: pre+'new-frame',
 			frame: pre+'frame',
 			frameIndicator: pre+'frame-',
-
+			frameCover : pre+'frame-cover',
 			zboxOuter : pre+'zbox-outer'
 		},
 
@@ -178,7 +178,7 @@
 		},
 
 		//pool for binding events to
-		pool: $(document),
+		pool: $(window),
 
 		ns : '.zoe',
 
@@ -324,7 +324,7 @@
 									// Mobile mode?
 									if($.browser.mobile){
 										state.colCount = 18; //half images
-										zoe.fps = 10; // reduce frame rate (less than 1/3rd of normal)
+										zoe.fps = 15; // reduce frame rate (less than 1/3rd of normal)
 									}
 
 									// take frame and work out angle
@@ -517,7 +517,6 @@
 									var state = get('state');
 									$this.stop(true);
 									if(state.idleTimeout) clearTimeout(state.idleTimeout);
-
 									//make sure buttons come in when we start doing stuff
 									$this.trigger('showButtons');
 
@@ -525,8 +524,9 @@
 									state.lastPanCursor = {x:x, y:y};
 									state.delta_cursor = [0, 0];
 									state.velocity = 0;
-									zoe.pool.on(evns(['mousemove','touchmove']), drag)
-									zoe.pool.one(evns(['mouseup', 'touchend', 'touchcancel']), lift);
+									zoe.pool.on(evns(['mousemove','touchmove']), drag);
+									zoe.pool.one(evns('mouseup'), lift);
+									zoe.pool.one(evns(['touchend', 'touchcancel', 'touchleave']), lift);
 									function drag(e){ return $this.trigger('pan', [pointer(e).clientX, pointer(e).clientY, e]) && e.give; }
 									function lift(e){ return $this.trigger('up', [e]) && e.give; }
 								},
@@ -538,7 +538,7 @@
 								},
 
 								// called when the user stops interacting
-								up : function(){
+								up : function(e, ev){
 									var state = get('state'),
 										width = $this.width();
 
@@ -683,7 +683,7 @@
 									state.touchstart = null;
 								},
 
-								touchmove: function(e){
+								'touchmove.zoom': function(e){
 									var state = get('state');
 									if(state.touchstart && e.originalEvent.touches.length == 2){
 										var pinch1_f1 = state.touchstart[0],
@@ -913,6 +913,8 @@
 										var $newFrame = state.frames[displayIndex];
 										$this.find('img:not('+dot(zoe.cls.frame)+')').remove();
 										$this.prepend($newFrame);
+										// add a div which will catch touches
+										$newFrame.after($('<div>').addClass(zoe.cls.frameCover).text(''));
 										state.blittedFrameIndex = displayIndex
 									}
 								},

@@ -18,11 +18,12 @@
 
 @z-frame: 1;
 @z-new-frame: 2;
-@z-zoom : 3;
-@z-help-overlay : 4;
-@z-progress: 5;
-@z-button-area: 6;
-@z-cta : 7;
+@z-frame-cover : 1;
+@z-zoom : 4;
+@z-help-overlay : 5;
+@z-progress: 6;
+@z-button-area: 7;
+@z-cta : 8;
 
 //---------------------------------------
 // Super helpers
@@ -130,9 +131,10 @@ a.@{pre}engage-trigger img {
 	position: relative;
 	z-index: @z-wrapper; //new context
 	.no-select;
+	-webkit-overflow-scrolling:touch;
 
 	//Image frames
-	img.@{pre}frame{
+	img.@{pre}frame, div.@{pre}frame-cover{
 		width: 100%;
 		height: 100%;
 		position: absolute;
@@ -144,6 +146,9 @@ a.@{pre}engage-trigger img {
 	}
 	img.@{pre}new-frame{
 		z-index: @z-new-frame;
+	}
+	div.@{pre}frame-cover{
+		z-index: @z-frame-cover;
 	}
 
 	/* Buttons */
