@@ -346,7 +346,12 @@
 
 									// Add button container.
 									var $buttonArea = tmpl(zoe.html.buttonWrapper),
-										buttonNames = ['zoom', 'help'];
+										buttonNames = ['help'];
+
+									//only zoom when it's not already massive!
+									if($this.width() < 1000){
+										buttonNames.unshift('zoom');
+									}
 
 									if(!get('inline')){
 										buttonNames.unshift('close');
