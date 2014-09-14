@@ -378,6 +378,7 @@
 												$this.trigger(name+'End');
 											}
 											$btn.data(oddClickName, !$btn.data(oddClickName));
+											return false;
 										});
 										$buttonArea.hide()
 										$buttonArea.find(dot(zoe.cls.buttonArea)).append($btn);
@@ -833,7 +834,7 @@
 										$zboxContent.click(function(){return false;}); //isolate child from propogating clicks
 									}
 								},
-								'open': function(){
+								'open': function(ev){
 									var $zboxOverlay = $(hash(zoe.id.zboxOverlay)),
 										$zboxContent = $(hash(zoe.id.zboxContent));
 
@@ -841,7 +842,7 @@
 									$('embed:visible, object:visible').addClass(zoe.cls.overlayUnhide).css('visibility', 'hidden');
 									$zboxOverlay.css('display','block').fadeIn(200, 0.6);
 									$zboxContent.append($this);
-									$zboxOverlay.one('click', function(){ on.zbox.close(); });
+									$zboxOverlay.on(evns(['mousedown', 'touchstart'], 'zbox'), function(e){ on.zbox.close(e); });
 
 									//attach events if required
 									if(!$._data($this[0], 'events'))
@@ -850,9 +851,15 @@
 
 									$this.trigger('setup');
 								},
-								'close': function(){
+								'close': function(ev){
 									var $zboxOverlay = $(hash(zoe.id.zboxOverlay)),
 										$zboxContent = $(hash(zoe.id.zboxContent));
+
+									// If we're forcing the event, or if the event was not on
+									// the overlay, don't exit.
+									var actionable = !ev || $zboxOverlay.is(ev.target);
+									if(!actionable) return;
+
 									$this.trigger('teardown');
 									$zboxOverlay.fadeOut(200, function(){
 										$zboxContent.empty();
