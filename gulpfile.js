@@ -54,7 +54,7 @@ var paths = {
 	less: 'less/style.less',
 	htc: 'less/backgroundsize.min.htc',
 	testHTML: 'src/test.html',
-	docs:'developer_docs.md',
+	docs:'docs/developer_docs.md',
 	languageStringsCSV: 'https://docs.google.com/spreadsheets/d/1y5McuTIe4G7F0xKM6JPm6STRKOHxE1G2IkDMiSxSeKo/export?format=csv&id=1y5McuTIe4G7F0xKM6JPm6STRKOHxE1G2IkDMiSxSeKo&gid=52872048',
 	mobileDetect: 'http://detectmobilebrowsers.com/download/jquery',
 	dist: 'dist/' + gitBranch,

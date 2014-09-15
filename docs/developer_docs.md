@@ -151,13 +151,13 @@ Whenever the frame changes, this event will be fired
 		jsz = doc.createElement(tag);
 		jsz.id=id;
 		jsz.type="text/javascript";
-		jsz.src= p+"//d34tuy4jppw3dn.cloudfront.net/v3-dev/js/zoetrope.jquery.js";
+		jsz.src= p+"//d34tuy4jppw3dn.cloudfront.net/v3/js/zoetrope.jquery.js";
 		head.appendChild(js);
 		head.appendChild(jsz);
 
 		css=doc.createElement(tag2);
 		css.rel="stylesheet";
-		css.href=p+"//d34tuy4jppw3dn.cloudfront.net/v3-dev/css/zoetrope.jquery.min.css";
+		css.href=p+"//d34tuy4jppw3dn.cloudfront.net/v3/css/zoetrope.jquery.min.css";
 		head.appendChild(css);
 	}
 
