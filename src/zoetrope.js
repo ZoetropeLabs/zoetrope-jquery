@@ -90,6 +90,7 @@
 		},
 
 		html:{
+			widget : '<div class="<%=zoe.cls.wrapper%>"></div>',
 			buttonWrapper : '<div class="<%=zoe.cls.buttonHotSpot%>"><div class="<%=zoe.cls.buttonArea%>"></div></div>',
 			button: '<a class="<%=zoe.cls.button%> <%=obj.buttonClass%>" title="<%=obj.buttonText%>" ><%=obj.buttonText%></a>',
 			zoomWrapper : '<div class="<%=zoe.cls.zoomWrapper%>"></div>',
@@ -146,6 +147,7 @@
 			'loadspin' : {init :false}, //Do one revolution on load
 			'loadspinLength' : {type:'number', init:3000, process: false}, //the number of millis to spend on the load spin
 			'idleAnimate' : {init :false},  //animate the reel when idle
+			'buttons' : {init: true},
 			'cdn' : {type: 'string', init: '{{image-cdn:url}}'},
 			'break' : {type: 'number', init: 2500},
 			'lang': {type: 'string', process: false, init: (window.navigator.userLanguage || window.navigator.language)},
@@ -249,9 +251,11 @@
 
 								//add markup and move this up to it.
 								var data = $this.data();
-								$wrapper = $(tag('div'))
-												.addClass(zoe.cls.wrapper)
-												.data(data);
+								$wrapper = tmpl(zoe.html.widget);
+								$wrapper.data(data);
+
+								//set the size of the wrapper based on the size of the img
+								$wrapper.width($this.width() || 500);
 
 								//normal - load with page
 								if(get('inline')){
@@ -260,11 +264,12 @@
 
 									if(!get('preload')){
 										var $trigger = tmpl(zoe.html.trigger);
+										$trigger.width($this.width() || 500);
 										//insert the trigger markup
 										$this.before($trigger);
 										$trigger.prepend($this);
 										$trigger.on('click', function(){
-											$trigger.before($this);
+											$trigger.before($wrapper);
 											$trigger.remove();
 											$this.trigger('setup');
 										})
@@ -304,6 +309,7 @@
 
 								//destroy the instance
 								'teardown.zoetrope' : function(){
+									$this.stop(true, true);
 									zoe.pool.off(on.pool);
 									$(window).off(on.window);
 								},
@@ -344,48 +350,56 @@
 									$this.trigger('zoetropeResize');
 									$this.trigger('preload');
 
-									// Add button container.
-									var $buttonArea = tmpl(zoe.html.buttonWrapper),
-										buttonNames = ['zoom', 'help'];
+									if(get('buttons')){
+										// Add button container.
+										var $buttonArea = tmpl(zoe.html.buttonWrapper),
+											buttonNames = ['help'];
 
-									if(!get('inline')){
-										buttonNames.unshift('close');
-									}
+										//only zoom when it's not already massive!
+										if($this.width() < 1000){
+											buttonNames.unshift('zoom');
+										}
 
-									$this.append($buttonArea);
+										if(!get('inline')){
+											buttonNames.unshift('close');
+										}
 
-									// Create the buttons. buttons trigger '{name}Start' on odd clicks and '{name}End' on even clicks
-									$.each(buttonNames, function(i, name){
-										var contents = {
-												buttonClass: pre+'btn-'+name,
-												buttonText: name,
-											},
-											oddClickName = name+'OddClick',
-											$btn = tmpl(zoe.html.button, contents);
+										$this.append($buttonArea);
 
-										$btn.data(oddClickName, true);
-										$btn.click(function(){
-											//callbacks that add the event triggering on $this
-											$this.stop(); //cancel animations
-											if($btn.data(oddClickName)){
-												$(this).addClass(zoe.cls.buttonActive);
-												//deactivate other buttons
-												$btn.siblings(dot(zoe.cls.buttonActive)).click();
-												$this.trigger(name+'Start');
-											}
-											else{
-												$btn.removeClass(zoe.cls.buttonActive);
-												$this.trigger(name+'End');
-											}
-											$btn.data(oddClickName, !$btn.data(oddClickName));
+										// Create the buttons. buttons trigger '{name}Start' on odd clicks and '{name}End' on even clicks
+										$.each(buttonNames, function(i, name){
+											var contents = {
+													buttonClass: pre+'btn-'+name,
+													buttonText: name,
+												},
+												oddClickName = name+'OddClick',
+												$btn = tmpl(zoe.html.button, contents);
+
+											$btn.data(oddClickName, true);
+											$btn.click(function(){
+												//callbacks that add the event triggering on $this
+												$this.stop(); //cancel animations
+												if($btn.data(oddClickName)){
+													$(this).addClass(zoe.cls.buttonActive);
+													//deactivate other buttons
+													$btn.siblings(dot(zoe.cls.buttonActive)).click();
+													$this.trigger(name+'Start');
+												}
+												else{
+													$btn.removeClass(zoe.cls.buttonActive);
+													$this.trigger(name+'End');
+												}
+												$btn.data(oddClickName, !$btn.data(oddClickName));
+												return false;
+											});
+											$buttonArea.hide()
+											$buttonArea.find(dot(zoe.cls.buttonArea)).append($btn);
+											// jQuery adds 'style="display:inline;' for some reason, but we really don't want that
+											$btn.removeAttr('style');
+											//run the setup handler for this
+											$this.trigger(name+'Setup');
 										});
-										$buttonArea.hide()
-										$buttonArea.find(dot(zoe.cls.buttonArea)).append($btn);
-										// jQuery adds 'style="display:inline;' for some reason, but we really don't want that
-										$btn.removeAttr('style');
-										//run the setup handler for this
-										$this.trigger(name+'Setup');
-									});
+									}
 
 									//optionally show the CTA. don't show if we're autospining, wait until we're done
 									if(!get('loadspin') && get('showCta'))
@@ -662,7 +676,7 @@
 								mousewheel: function(e){
 									var state = get('state');
 									if (e.originalEvent.wheelDelta >= 0) {
-										if(!state.zoomed){
+										if(!state.zoomed && $this.find(dot(pre+'btn-zoom')).length){
 											$this.find(dot(pre+'btn-zoom')).click();
 											return false;
 										}
@@ -833,7 +847,7 @@
 										$zboxContent.click(function(){return false;}); //isolate child from propogating clicks
 									}
 								},
-								'open': function(){
+								'open': function(ev){
 									var $zboxOverlay = $(hash(zoe.id.zboxOverlay)),
 										$zboxContent = $(hash(zoe.id.zboxContent));
 
@@ -841,7 +855,7 @@
 									$('embed:visible, object:visible').addClass(zoe.cls.overlayUnhide).css('visibility', 'hidden');
 									$zboxOverlay.css('display','block').fadeIn(200, 0.6);
 									$zboxContent.append($this);
-									$zboxOverlay.one('click', function(){ on.zbox.close(); });
+									$zboxOverlay.on(evns(['mousedown', 'touchstart'], 'zbox'), function(e){ on.zbox.close(e); });
 
 									//attach events if required
 									if(!$._data($this[0], 'events'))
@@ -850,9 +864,15 @@
 
 									$this.trigger('setup');
 								},
-								'close': function(){
+								'close': function(ev){
 									var $zboxOverlay = $(hash(zoe.id.zboxOverlay)),
 										$zboxContent = $(hash(zoe.id.zboxContent));
+
+									// If we're forcing the event, or if the event was not on
+									// the overlay, don't exit.
+									var actionable = !ev || $zboxOverlay.is(ev.target);
+									if(!actionable) return;
+
 									$this.trigger('teardown');
 									$zboxOverlay.fadeOut(200, function(){
 										$zboxContent.empty();
@@ -904,8 +924,10 @@
 											complete: function(){
 												$oldFrame.detach();
 												$newFrame.removeClass(zoe.cls.newFrame);
+												$this.trigger('framechange',[state.blittedFrameIndex]);
 											}
 										});
+
 
 									}
 									//wait until preloading is progressing
