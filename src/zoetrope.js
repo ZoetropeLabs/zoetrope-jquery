@@ -924,8 +924,10 @@
 											complete: function(){
 												$oldFrame.detach();
 												$newFrame.removeClass(zoe.cls.newFrame);
+												$this.trigger('framechange',[state.blittedFrameIndex]);
 											}
 										});
+
 
 									}
 									//wait until preloading is progressing
