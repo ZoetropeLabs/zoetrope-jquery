@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title>Zoetrope Engage&trade; Image Viewer</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <link rel="stylesheet" media="all" href="public/stylesheets/normalize.css" />
+  <link rel="stylesheet" media="all" href="docco.css" />
+</head>
+<body>
+  <div class="container">
+    <div class="page">
+
+      <div class="header">
+        
+          
+          <h1 id="zoetrope-engage-trade-image-viewer">Zoetrope Engage&trade; Image Viewer</h1>
+<p>The Zoetrope Engage&trade; Image Viewer (refered to as ‘ZEV’ from here on in) is a pure html/js/css widget to display the 3D photography created by Zoetrope. The widget is built as a jQuery plugin but is also available as a self contained module. This document is aimed at developers who are creating integrations with the ZEV.</p>
+<h2 id="complete-example">Complete Example</h2>
+<p>Assuming that the Zoetrope JS and CSS has been included (for this example they’re inserted in the footer of this page and we’re including both jquery and the plugin), adding a Zoetrope image is as simple as follows:</p>
+<pre><code class="lang-html">
+<span class="hljs-tag">&lt;<span class="hljs-title">img</span>
+<span class="hljs-attribute">src</span>=<span class="hljs-value">"https://s3-eu-west-1.amazonaws.com/zoetrope-alpha/52ea7cc2c24f284cfaa26be8/500/0.jpg"</span>
+<span class="hljs-attribute">class</span>=<span class="hljs-value">"zoe-engage-image"</span>
+<span class="hljs-attribute">data-zoe-site</span>=<span class="hljs-value">"testingtesting"</span>
+<span class="hljs-attribute">data-zoe-image</span>=<span class="hljs-value">"530b5d6cc24f281c908745ec"</span>
+<span class="hljs-attribute">data-zoe-inline</span>=<span class="hljs-value">"true"</span>
+<span class="hljs-attribute">width</span>=<span class="hljs-value">"500"</span>
+<span class="hljs-attribute">height</span>=<span class="hljs-value">"500"</span>
+/&gt;</span>
+
+with the following script in the `<span class="hljs-tag">&lt;<span class="hljs-title">head</span>&gt;</span>` of the page:
+```html    
+<span class="hljs-tag">&lt;<span class="hljs-title">script</span> <span class="hljs-attribute">src</span>=<span class="hljs-value">"http://code.jquery.com/jquery-1.11.0.min.js"</span>&gt;</span><span class="javascript"></span><span class="hljs-tag">&lt;/<span class="hljs-title">script</span>&gt;</span>
+<span class="hljs-tag">&lt;<span class="hljs-title">script</span> <span class="hljs-attribute">src</span>=<span class="hljs-value">"//d34tuy4jppw3dn.cloudfront.net/v3/js/zoetrope.jquery.min.js"</span>&gt;</span><span class="javascript"></span><span class="hljs-tag">&lt;/<span class="hljs-title">script</span>&gt;</span>
+<span class="hljs-tag">&lt;<span class="hljs-title">link</span> <span class="hljs-attribute">type</span>=<span class="hljs-value">"text/css"</span> <span class="hljs-attribute">rel</span>=<span class="hljs-value">"stylesheet"</span> <span class="hljs-attribute">href</span>=<span class="hljs-value">"//d34tuy4jppw3dn.cloudfront.net/v3/css/zoetrope.jquery.min.css"</span> <span class="hljs-attribute">media</span>=<span class="hljs-value">"all"</span>&gt;</span>
+</code></pre>
+<p>Which will result in the folling:</p>
+<blockquote>
+<p>Example 1:
+<img src="https://s3-eu-west-1.amazonaws.com/zoetrope-alpha/52ea7cc2c24f284cfaa26be8/500/0.jpg" class="zoe-engage-image" data-zoe-site="abc123" data-zoe-image="530b5d6cc24f281c908745ec" width="500" height="500" data-zoe-rel="ab" data-zoe-inline="true"/></p>
+</blockquote>
+<p>The <code>img</code> tag is replaced with the ZEV after loading. by using the <code>img</code> as ths initial element we are able to provided a fallback image, which can load very quickly (way before <code>window.onload</code> fires).</p>
+<h3 id="bandwidth-saving">Bandwidth saving</h3>
+<p>The ZEV detects the screen size of the client and uses this to decide which resolution profile to use for the display of the 3D image. The modes are as follows:</p>
+<ol>
+<li>250px square</li>
+<li>500px square</li>
+<li>1000px square</li>
+</ol>
+<p>250px is intended for mobile and low resolution tablets, the 500px varient is used for HIDPI mobile devices (retina) and normal desktop machines and finally the 1000px varient is used for HIDPI desktop devices.</p>
+<p><strong>note:</strong> The ZEV also detects if the device is a known mobile device and will load half the number of views on these devices to save on bandwidth.</p>
+<h3 id="zoetrope-cdn">Zoetrope CDN</h3>
+<p>The scripts and styles are served from the Zoetrope CDN so that updates can be seemlessly provided to our clients. Currently Zoetrope is using cloudfront in order to provide SSL support. All ZEV files are served from <code>https://d34tuy4jppw3dn.cloudfront.net</code>, though images for the ZEV may be hosted from other locations if self hosting the image resources.</p>
+<h2 id="json-feeds">JSON Feeds</h2>
+<h3 id="example">Example</h3>
+<p>The JSON feed has been kept as simple as possible: an array of objects.</p>
+<pre><code class="lang-javascript">[
+{
+<span class="hljs-string">"sku"</span>: <span class="hljs-string">"abc"</span>,
+<span class="hljs-string">"zoetrope_id"</span>:<span class="hljs-string">"5346ab94c24f28777972d7cf"</span>,
+<span class="hljs-string">"zoetrope_start_position"</span>:<span class="hljs-string">"0"</span>
+},
+...
+{
+<span class="hljs-string">"sku"</span>: <span class="hljs-string">"def"</span>,
+<span class="hljs-string">"zoetrope_id"</span>:<span class="hljs-string">"53455f67c24f282735cb9806"</span>,
+<span class="hljs-string">"zoetrope_start_position"</span>:<span class="hljs-string">"20"</span>
+}
+]
+</code></pre>
+<h2 id="zev-styles">ZEV Styles</h2>
+<p>The ZEV will look for all elements on the page which have the class <code>zoe-engage-image</code>. All of these images will be processed and have the ZEV behaviors attached to them. Once this happens, there are 2 choices for the display style: <strong>Popover</strong> which will show the image in a colorbox or <strong>Inline</strong> which will replace the placeholder image with the interactive Zoetrope image.</p>
+<h3 id="inline-default-">Inline (default)</h3>
+<p>By setting the inline attribute, the ZEV will replace the starting image with the interactive version in its place. This is well suited for use in product pages and places where there is only one image inline.</p>
+<h3 id="popover">Popover</h3>
+<p>If you’d prefer not to display the ZEV inline, it can also be shown in a popover. This has the advantage that it allows greater cross device compatibility for sites which are not fully responsive. If you are using multiple ZEVs on a page, we recommend using the popover option to decrease resource usgae.</p>
+<blockquote>
+<p>Example:
+<img src="https://s3-eu-west-1.amazonaws.com/zoetrope-alpha/52ea7cc2c24f284cfaa26be8/500/0.jpg" class="zoe-engage-image" data-zoe-site="abc123" data-zoe-image="52ea7cc2c24f284cfaa26be8" data-zoe-inline="false" width="500" height="500"></p>
+</blockquote>
+<h2 id="settings">Settings</h2>
+<p>The ZEV makes use of html 5 <code>data-*</code> attributes to control the viewer settings. Due to this, an html 5 doc type (<code>&lt;!doctype html&gt;</code>) should be used in order to pass validation. There’s an overview of <code>data-*</code> attributes <a href="http://ejohn.org/blog/html-5-data-attributes/">here</a>. All settings are prefixed with <code>data-zoe-</code> where the <code>zoe-</code> acts as a Zoetrope name space.</p>
+<blockquote>
+<p>As an example of the name spacing, the <code>image</code> setting is added to the html in the attribute <code>data-zoe-image=&quot;[image id]&quot;</code>.</p>
+</blockquote>
+<p>Zoetrope images are</p>
+<h3 id="compulsory-settings">Compulsory Settings</h3>
+<h4 id="image-image-">Image <code>image</code></h4>
+<p>The <code>image</code> setting contains the Zoetrope provided UUID of the image which is to be displayed. For deep integrations these will normally be provided through a JSON feed.</p>
+<h4 id="site-id-site-">Site ID <code>site</code></h4>
+<p>The site ID is needed for analytics purposes maninly, but is likely to be used to serve up custom style sheets and othe future features. You will be provided with a site ID by Zoetrope.</p>
+<h3 id="optional-settings">Optional Settings</h3>
+<h4 id="start-position-start-position-">Start Position <code>start-position</code></h4>
+<p>The start position is the view which will be used for the intial viewing angle of the zoetrope image and should be used to generate an appropriate placeholder image url too. At present this should be a number between 0-107 and will default to 0 if it has not been set.</p>
+<p>Most integration modules would store a tuple of the <code>image</code> id and <code>start-position</code> since they are the 2 parts which will be unique to all ZEV instances.</p>
+<blockquote>
+<p>It’s highly recomended that the <code>start-position</code> attribute is used!</p>
+</blockquote>
+<h4 id="inline-inline-">Inline <code>inline</code></h4>
+<p>By setting the <code>inline</code> attribute to <code>false</code>, the ZEV will display in the popover, rather than inline. See <a href="#inline">Inline</a>.</p>
+<h4 id="slideshow-grouping-rel-">Slideshow grouping <code>rel</code></h4>
+<blockquote>
+<p>Only applies to popover style image.</p>
+</blockquote>
+<p>For situations where multiple ZEV instances are used in popovers on the same page, setting the same <code>rel</code> value for multiple ZEV instances will show next/previous buttons on the popover.</p>
+<h4 id="preload-images-preload-">Preload Images <code>preload</code></h4>
+<blockquote>
+<p>To be considerate of bandwidth, this should not be used for multiple ZEV instances on the same page!</p>
+</blockquote>
+<p>By setting the <code>preload</code> attribute, the ZEV will preload the image resources for the viewer, which clearly allows for a smoother experience for the client. Resources will not be loaded until after <code>window.onload</code> has fired. </p>
+<h4 id="show-call-to-action-show-cta-">Show Call to Action <code>show-cta</code></h4>
+<p>By default the ZEV shows a few strings and icons to indicate that the ZEV is more than a static image. These strings are currently avaliable in 5 languages (<code>en</code>,<code>fr</code>,<code>de</code>,<code>it</code> and <code>hi</code>), with more being added all the time. If a specific new langauage is needed, please contact us.</p>
+<h4 id="auto-rotate-on-load-loadspin-">Auto Rotate on Load <code>loadspin</code></h4>
+<p>When this attribute is set, the ZEV will start to rotate as soon as it has loaded. This can be applied to inline or popover style ZEV instances. Currently this rotates does a single 360° rotation on the same level as the image specified in ‘start-position’.</p>
+<h4 id="animate-when-idle-idle-animate-">Animate When Idle <code>idle-animate</code></h4>
+<p>If <code>idle-animate</code> is set, the ZEV will rotate whenever the user is not interacting with it. After an interaction there is a timeout before the viewer begins the animation again. Currently this rotates on the same level as the image specified in <code>start-position</code>, until the user changes the level.</p>
+<h2 id="events">Events</h2>
+<p>There are certain events which can be hooked in to which will allow listening for changes to the viewer</p>
+<h3 id="framechange">framechange</h3>
+<p>Whenever the frame changes, this event will be fired</p>
+<pre><code class="lang-javascript">$(<span class="hljs-string">'.zoe-wrapper'</span>).on(<span class="hljs-string">'framechange'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(e, newFrameIndex)</span></span>{
+<span class="hljs-comment">//Do something with the `newFrameIndex` argument</span>
+});
+</code></pre>
+<p><!-- Add the Zoetrope Scripts --></p>
+<script>
+!function(doc,tag,tag2,id,baseUrl){
+
+var js,
+head=doc.getElementsByTagName('head')[0],
+p = document.location.protocol === 'https:' ? 'https:' : 'http:';
+
+if(!doc.getElementById(id)){
+js=doc.createElement(tag);
+js.id='jq';
+js.src="http://code.jquery.com/jquery-1.11.0.min.js"
+js.type="text/javascript";
+jsz = doc.createElement(tag);
+jsz.id=id;
+jsz.type="text/javascript";
+jsz.src= p+"//d34tuy4jppw3dn.cloudfront.net/v3/js/zoetrope.jquery.js";
+head.appendChild(js);
+head.appendChild(jsz);
+
+css=doc.createElement(tag2);
+css.rel="stylesheet";
+css.href=p+"//d34tuy4jppw3dn.cloudfront.net/v3/css/zoetrope.jquery.min.css";
+head.appendChild(css);
+}
+
+}(document,"script","link","zoetrope-wjs",'');
+</script>
+
+
+
+          
+        
+
+        
+      </div>
+
+      
+      <div class="fleur">h</div>
+    </div>
+  </div>
+</body>
+</html>
