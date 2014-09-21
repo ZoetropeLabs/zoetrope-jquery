@@ -146,6 +146,7 @@
 			'loadspin' : {init :false}, //Do one revolution on load
 			'loadspinLength' : {type:'number', init:3000, process: false}, //the number of millis to spend on the load spin
 			'idleAnimate' : {init :false},  //animate the reel when idle
+			'buttons' : {init: true}, // Show buttons - if you disable no zoom or help will be shown. mainly for auto-animate sitations.
 			'cdn' : {type: 'string', init: '{{image-cdn:url}}'},
 			'break' : {type: 'number', init: 2500},
 			'lang': {type: 'string', process: false, init: (window.navigator.userLanguage || window.navigator.language)},
