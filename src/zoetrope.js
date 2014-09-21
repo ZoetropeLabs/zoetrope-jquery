@@ -354,8 +354,6 @@
 										$this.on(evns(key, 'analytics'), ev);
 									})
 
-									$this.trigger('zoetropeResize');
-									$this.trigger('preload');
 
 									if(get('buttons')){
 										// Add button container.
@@ -412,7 +410,7 @@
 									if(get('gallery') && get('galleryImages').length){
 										//add the class now so that page reflows sooner
 										$this.addClass(zoe.cls.hasGallery);
-										
+
 										$this.on('preloadEnd', function(){
 											var $gallery = tmpl(zoe.html.galleryContainer),
 												images = get('galleryImages');
@@ -423,21 +421,35 @@
 											// Will only show first 4 at the moment
 											$.each(images, function(k,v){
 												if(k > 3) return;
+												// convert index to angle, then using state
+												// convert back to being an index so that we
+												// compensate for differences in the number of frames etc
 												var pos = + v.position,
-													$image = state.frames[pos].clone().attr('class','').addClass(zoe.cls.galleryImage),
-													url = getImageSrc(pos);
+													angleCol = (pos % 36) * 10,
+													angleRow = floor(pos / 36) * 30,
+													col = floor(angleCol/(360 / state.colCount)),
+													row = angleRow/(90/state.rowCount),
+													index = col + row*state.colCount,
+													$image = state.frames[index]
+																.clone()
+																.attr('class','')
+																.addClass(zoe.cls.galleryImage),
+													url = getImageSrc(index);
 
-												$image.attr('src', 'http:'+url);
+												$image.attr('src', url);
 												console.log($image);
 												$gallery.append($image);
 												//animation bind
-												$image.on('touchstart mouseover', function(){
+												$image.on('click mouseover', function(){
 													$this.stop(true).animate({'zoetropeImage' : pos}, 500);
 												});
 											});
 											$gallery.fadeIn(300);
 										});
 									}
+
+									$this.trigger('zoetropeResize');
+									$this.trigger('preload');
 
 									//optionally show the CTA. don't show if we're autospining, wait until we're done
 									if(!get('loadspin') && get('showCta'))
@@ -1063,7 +1075,7 @@
 
 		var state = $(fx.elem).data('state');
 		if( !fx.zoeInit ){
-			fx.zoeStart = toZoetropePosition(state.blittedFrameIndex || 0);
+			fx.zoeStart = {col : state.col, row: state.row};
 			fx.zoeEnd = toZoetropePosition(fx.end % 108);
 			fx.diff = zoetropeDiff(fx.zoeStart, fx.zoeEnd);
 			fx.zoeInit = true;
@@ -1073,6 +1085,7 @@
 		state.row = fx.zoeStart.row + fx.diff.row * fx.pos;
 
 		function toZoetropePosition(index){
+			//these are always in the 0-107 form, even on mobile versions
 			return {col : ((+index) % 36) * 10, row: floor((+index) / 36) * 30};
 		}
 		function zoetropeDiff(a,b){

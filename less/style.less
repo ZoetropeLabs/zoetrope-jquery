@@ -140,7 +140,7 @@ a.@{pre}engage-trigger img {
 	.no-select;
 	-webkit-overflow-scrolling:touch;
 	margin: 0 auto;
-
+	background-color: #fff;
 
 	//Image frames
 	img.@{pre}frame, div.@{pre}frame-cover{
@@ -353,7 +353,6 @@ a.@{pre}engage-trigger img {
 		width: 90%;
 		padding: 2.5% 5%;
 		z-index: @z-gallery;
-		background-color: #fff;
 	}
 
 	.@{pre}gallery-image{
@@ -372,7 +371,11 @@ a.@{pre}engage-trigger img {
 
 //wrapper with gallery
 .@{pre}engage-wrapper.@{pre}gallery{
-	padding-bottom: 125px;
+	padding-bottom: 25%;
+
+	.@{pre}help-wrapper{
+		height: 64%;
+	}
 }
 
 //overlay
