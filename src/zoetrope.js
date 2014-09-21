@@ -81,7 +81,10 @@
 			frame: pre+'frame',
 			frameIndicator: pre+'frame-',
 			frameCover : pre+'frame-cover',
-			zboxOuter : pre+'zbox-outer'
+			zboxOuter : pre+'zbox-outer',
+			galleryContainer : pre+'gallery',
+			galleryImage : pre+'gallery-image',
+			hasGallery : pre+'gallery'
 		},
 
 		id :{
@@ -124,7 +127,9 @@
 							<div class="<%=zoe.cls.triggerCta%>"><span>&nbsp;</span><%=zoe.strs.inlineCallToAction[$.browser.mobile ? "mobile" : "desktop"]%></div>\
 						</div>',
 			zboxOverlay : '<div id="<%=zoe.id.zboxOverlay%>">&nbsp;</div>',
-			zboxContent : '<div class="<%=zoe.cls.zboxOuter%>"><div id="<%=zoe.id.zboxContent%>"></div></div>'
+			zboxContent : '<div class="<%=zoe.cls.zboxOuter%>"><div id="<%=zoe.id.zboxContent%>"></div></div>',
+			galleryContainer : '<div class="<%=zoe.cls.galleryContainer%>"></div>',
+			galleryImage : '<img class="<%=zoe.cls.galleryImage%>" />'
 		},
 
 		// language strings, `strs` will contain the active language
@@ -147,7 +152,9 @@
 			'loadspin' : {init :false}, //Do one revolution on load
 			'loadspinLength' : {type:'number', init:3000, process: false}, //the number of millis to spend on the load spin
 			'idleAnimate' : {init :false},  //animate the reel when idle
-			'buttons' : {init: true},
+			'buttons' : {init: true}, //turn off buttons - use with caution.
+			'gallery' : {init: false}, //show gallery
+			'galleryImages' : {init : [], type: 'array'},
 			'cdn' : {type: 'string', init: '{{image-cdn:url}}'},
 			'break' : {type: 'number', init: 2500},
 			'lang': {type: 'string', process: false, init: (window.navigator.userLanguage || window.navigator.language)},
@@ -347,8 +354,6 @@
 										$this.on(evns(key, 'analytics'), ev);
 									})
 
-									$this.trigger('zoetropeResize');
-									$this.trigger('preload');
 
 									if(get('buttons')){
 										// Add button container.
@@ -400,6 +405,51 @@
 											$this.trigger(name+'Setup');
 										});
 									}
+
+									// Gallery images
+									if(get('gallery') && get('galleryImages').length){
+										//add the class now so that page reflows sooner
+										$this.addClass(zoe.cls.hasGallery);
+
+										$this.on('preloadEnd', function(){
+											var $gallery = tmpl(zoe.html.galleryContainer),
+												images = get('galleryImages');
+
+											$gallery.hide();
+											$this.append($gallery);
+
+											// Will only show first 4 at the moment
+											$.each(images, function(k,v){
+												if(k > 3) return;
+												// convert index to angle, then using state
+												// convert back to being an index so that we
+												// compensate for differences in the number of frames etc
+												var pos = + v.position,
+													angleCol = (pos % 36) * 10,
+													angleRow = floor(pos / 36) * 30,
+													col = floor(angleCol/(360 / state.colCount)),
+													row = angleRow/(90/state.rowCount),
+													index = col + row*state.colCount,
+													$image = state.frames[index]
+																.clone()
+																.attr('class','')
+																.addClass(zoe.cls.galleryImage),
+													url = getImageSrc(index);
+
+												$image.attr('src', url);
+												console.log($image);
+												$gallery.append($image);
+												//animation bind
+												$image.on('click mouseover', function(){
+													$this.stop(true).animate({'zoetropeImage' : pos}, 500);
+												});
+											});
+											$gallery.fadeIn(300);
+										});
+									}
+
+									$this.trigger('zoetropeResize');
+									$this.trigger('preload');
 
 									//optionally show the CTA. don't show if we're autospining, wait until we're done
 									if(!get('loadspin') && get('showCta'))
@@ -829,8 +879,10 @@
 								// limited to `zoe.fps` Hz.
 								zoetropeResize: function(){
 									var state = get('state');
+
 									if(!state.resizeUpdated) return;
 									state.resizeUpdated = false;
+
 									$this.height($this.outerWidth());
 								}
 							},
@@ -1023,7 +1075,7 @@
 
 		var state = $(fx.elem).data('state');
 		if( !fx.zoeInit ){
-			fx.zoeStart = toZoetropePosition(state.displayIndex || 0);
+			fx.zoeStart = {col : state.col, row: state.row};
 			fx.zoeEnd = toZoetropePosition(fx.end % 108);
 			fx.diff = zoetropeDiff(fx.zoeStart, fx.zoeEnd);
 			fx.zoeInit = true;
@@ -1033,6 +1085,7 @@
 		state.row = fx.zoeStart.row + fx.diff.row * fx.pos;
 
 		function toZoetropePosition(index){
+			//these are always in the 0-107 form, even on mobile versions
 			return {col : ((+index) % 36) * 10, row: floor((+index) / 36) * 30};
 		}
 		function zoetropeDiff(a,b){
@@ -1127,6 +1180,8 @@
 			case 'boolean' : init = init || false; break;
 			case 'string' : init = init || ''; break;
 			case 'enum' : init = init || options[0]; break;
+			case 'array' : init = init || []; break;
+			case 'object' : init = init || {}; break;
 		}
 		ret = typeof elemData !== 'undefined' ? elemData : init;
 
@@ -1134,10 +1189,10 @@
 			error('the setting '+key+' is needs to be one of '+options);
 
 
-		if(required && typeof elemData === 'undefined')
+		if(required && $.type(elemData) === 'undefined')
 			error('the setting '+key+' is required for Zoetrope to work');
 
-		if(type !== 'enum' && typeof ret !== type)
+		if(type !== 'enum' && $.type(ret) !== type)
 			error('the setting '+key+' is of type '+(typeof ret)+' but should be a '+type);
 
 		return ret;
