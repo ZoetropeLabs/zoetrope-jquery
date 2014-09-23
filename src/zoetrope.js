@@ -563,7 +563,17 @@
 								},
 
 								progressHide: function(){
-									$this.find(dot(zoe.cls.progressWrapper)).fadeOut(100);
+									var $progress = $this.find(dot(zoe.cls.progressWrapper))
+									// zoom fade
+									$progress.animate(
+									{
+										opacity : 0,
+										width : 160,
+										height : 160,
+										marginLeft : -80,
+										marginTop : -80,
+									},
+									250, function(){ $progress.hide(); });
 								},
 
 								//called when a frame is loaded - used to perform early animation

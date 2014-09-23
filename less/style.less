@@ -10,7 +10,7 @@
 // prefix which should match that used in the JS
 @pre: zoe-;
 // Button square size for help/zoom/close
-@button-size: 35px;
+@button-size: 40px;
 
 // Z-index scale
 @z-wrapper : 1; //makes a new stack context
@@ -76,6 +76,12 @@
 	-moz-border-radius:    @radius;
 	border-radius:         @radius;
 
+}
+
+.border-box(){
+	-webkit-box-sizing: border-box; // Safari/Chrome, other WebKit
+    -moz-box-sizing: border-box;    // Firefox, other Gecko
+    box-sizing: border-box;         // Opera/IE 8+
 }
 
 //---------------------------------------
@@ -163,8 +169,8 @@ a.@{pre}engage-trigger img {
 	/* Buttons */
 	.@{pre}btn-hot-spot{
 		position: absolute;
-		top:0;
-		right:5px;
+		top: 0;
+		right: 10px;
 		width: @button-size;
 		height: auto;
 		z-index: @z-button-area;
@@ -174,7 +180,7 @@ a.@{pre}engage-trigger img {
 		float: left;
 		width: @button-size;
 		height: @button-size;
-		margin-top: 5px;
+		margin-top: 10px;
 		cursor: pointer;
 		.hide-text;
 		.no-select;
@@ -325,6 +331,8 @@ a.@{pre}engage-trigger img {
 		background-image: url(../img/progress.png);
 		.background-shape(100%, auto);
 		background-position: center bottom;
+		padding: 4px;
+		.border-box;
 	}
 	.@{pre}progress{
 		background-color: @zoe-blue;
