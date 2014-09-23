@@ -1014,8 +1014,14 @@
 
 								//	Controls deceleration when there is velocity
 								'tick.velocity' : function(){
-									var state = get('state'),
-										deltaV = get('break');
+									var state = get('state');
+
+									//if state has gone, we need to
+									if($.type(state) === 'undefined'){
+										return;
+									}
+
+									var	deltaV = get('break');
 									if(!state.interactive && state.velocity){
 										if(state.velocity > 0){
 											state.velocity = state.velocity - deltaV / zoe.fps;
