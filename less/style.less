@@ -324,24 +324,28 @@ a.@{pre}engage-trigger img {
 		.border-radius;
 		overflow: hidden;
 		z-index: @z-progress;
+		background-color: white;
 	}
 	.@{pre}progress-z{
 		width: 100%;
 		height: 100%;
-		background-image: url(../img/progress.png);
-		.background-shape(100%, auto);
-		background-position: center bottom;
-		padding: 4px;
+		padding: 9px 4px 13px 4px;
 		.border-box;
+		position: absolute;
 	}
 	.@{pre}progress{
+		background-image: none;
 		background-color: @zoe-blue;
-		position: absolute;
 		bottom: 0px;
 		height: 1px;
+		z-index: 1;
+		background-clip: content-box;
 	}
 	.@{pre}background{
-		background-color: white;
+		background-position: center bottom;
+		background-image: url(../img/progress.png);
+		.background-shape(100%, auto);
+		z-index: 2;
 	}
 	//cta's
 	.@{pre}interact-cta{

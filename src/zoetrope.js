@@ -559,11 +559,13 @@
 
 									//update the progress bar
 									state.progressPercentage = min(100, (100 * (progress/state.progressMax)));
-									$this.find(dot(zoe.cls.progress)).css('height', state.progressPercentage + '%');
+									var height = $this.find(dot(zoe.cls.progressWrapper)).height();
+									$this.find(dot(zoe.cls.progress)).height((state.progressPercentage/100)*height);
 								},
 
 								progressHide: function(){
 									var $progress = $this.find(dot(zoe.cls.progressWrapper))
+									$this.find(dot(zoe.cls.progress)).css('height', '100%');
 									// zoom fade
 									$progress.animate(
 									{
