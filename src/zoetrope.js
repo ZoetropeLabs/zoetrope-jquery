@@ -959,7 +959,7 @@
 
 									//if state has gone, we need to
 									if($.type(state) === 'undefined'){
-										$this.teardown();
+										$this.trigger('teardown');
 										return;
 									}
 
