@@ -955,8 +955,15 @@
 								// is picked from the state and faded in over 50ms, at which point the
 								// previous frame is removed
 								'tick.zoetrope' : function(){
-									var state = get('state'),
-										blittedFrameIndex = state.blittedFrameIndex,
+									var state = get('state');
+
+									//if state has gone, we need to
+									if($.type(state) === 'undefined'){
+										$this.teardown();
+										return;
+									}
+
+									var	blittedFrameIndex = state.blittedFrameIndex,
 										displayIndex = floor(state.col / (360/state.colCount)) + floor(state.row / (90/state.rowCount))*state.colCount;
 
 									// `pan` syncing
