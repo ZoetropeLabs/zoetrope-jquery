@@ -297,7 +297,7 @@ gulp.task('javascript', function () {
 			},
 			preserveComments: comment_preserve
 		})) //the minified version drops all the console logging
-		.pipe(rename(module_name+'.min.js')) //Keep a dev version without gzipping
+		.pipe(rename(module_name+'.min.uncomp.js')) //Keep a dev version without gzipping
 		.pipe(gulp.dest(paths.dist + '/js'))
 		.pipe(gzip())
 		.pipe(size({
