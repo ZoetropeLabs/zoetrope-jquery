@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Bootstrap 101 Template</title>
+
+    <!-- Latest compiled and minified CSS -->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+
+	<!-- Optional theme -->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
+
+	<!-- Zoetrope styles -->
+	<link rel="stylesheet" href="https://d34tuy4jppw3dn.cloudfront.net/v3/css/zoetrope.jquery.min.css">
+
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+	<!-- Latest compiled and minified JavaScript -->
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+
+	<script src="https://d34tuy4jppw3dn.cloudfront.net/v3/js/zoetrope.jquery.min.js"></script>
+
+	<script type="text/JavaScript">
+
+		// Perform load animation
+
+		// This must be attached *after* the load
+		$(function(){
+
+			$('.image .zoe-engage-wrapper').on('progressHide', function(){
+				var $this = $(this);
+
+				/*
+				 * We use css to hide all <img> tags within .image so that both
+				 * the placeholder image and the frames within the widget can fade
+				 * in gradually, but the Loading UI will be solid.
+				 */
+				$('.image').addClass('show');
+				$this.stop(true).animate(
+				{
+					zoetropeColDelta: 120, // in degrees
+				},
+				{
+					duration: 800,
+					complete: function(){
+						$this.trigger('showButtons');
+					},
+					queue: false,
+				});
+
+			});
+
+			// fallback - just show the placeholder
+			if($('.image .zoe-engage-wrapper').length == 0){
+				$('.image').addClass('show');
+			}
+
+		});
+
+	</script>
+
+	<style type="text/css">
+
+		/* Important CSS */
+		.image img{
+			opacity: 0.1;
+			-webkit-transition: all 0.5s ease;
+		    -moz-transition: all 0.5s ease;
+		    -o-transition: all 0.5s ease;
+		    transition: all 0.5s ease;
+
+		}
+		.image.show img{
+			opacity: 1;
+		}
+
+		/* Styling CSS */
+		.image{
+			max-width: 500px;
+		    margin: 0 auto;
+		}
+		.title-row{
+			margin-top: 7%;
+			padding-bottom: 0px;
+		}
+
+		.btn-success{
+			background-image: none;
+			margin-top: 30px;
+			width: 250px;
+		}
+
+		li{
+			padding-bottom: 15px;
+		}
+
+      html,
+      body {
+        height: 100%;
+        /* The html and body elements cannot have any padding or margin. */
+        font-family: Perpetua, Baskerville, "Big Caslon", "Palatino Linotype", Palatino, "URW Palladio L", "Nimbus Roman No9 L", serif;
+        font-size: 16px
+      }
+
+      /* Wrapper for page content to push down footer */
+      #wrap {
+        min-height: 100%;
+        height: auto !important;
+        height: 100%;
+        /* Negative indent footer by it's height */
+        margin: 0 auto -60px;
+      }
+
+      /* Set the fixed height of the footer here */
+      #push,
+      #footer {
+        height: 60px;
+      }
+      #footer {
+        background-color: #f5f5f5;
+      }
+
+      #footer p {
+      	margin-top: 20px;
+      	text-align: center;
+      	color: #333;
+      }
+
+      /* Lastly, apply responsive CSS fixes as necessary */
+      @media (max-width: 767px) {
+        #footer {
+          margin-left: -20px;
+          margin-right: -20px;
+          padding-left: 20px;
+          padding-right: 20px;
+        }
+        .btn-success{
+        	margin: 20px auto;
+        	width: 100%;
+        }
+      }
+
+      .container{
+      	max-width: 1024px;
+      }
+
+	</style>
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+
+  	<div id="wrap">
+	    <div class="container">
+
+	    	<!-- title row -->
+	    	<div class="row title-row">
+	    		<div class="title col-md-6 col-md-offset-6"><h1>Telephone</h1></div>
+	    	</div>
+
+	    	<!-- main content -->
+	    	<div class="row">
+	    		<div class="col-md-6">
+	    			<div class="image ">
+	    				<img src="http://d34tuy4jppw3dn.cloudfront.net/53be768ec24f2861fa2ec39d/500/26.jpg" class="zoe-engage-image" data-zoe-site="51b909a4-f5d7-4627-9cad-cfeb69efc83a" data-zoe-image="53be768ec24f2861fa2ec39d" data-zoe-show-cta="false" data-zoe-gallery-images="" data-zoe-start-position="23">
+	    			</div>
+	    		</div>
+
+	    		<div class="description col-md-6">
+	    			<p>Lorem ipsum dolor sit amet, consectetur adipis nisi zoetrope ut aliquip ex ea commodo consequat.</p>
+
+	    			<p>Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum</p>
+
+	    			<ul>
+	    				<li>20 buttons</li>
+	    				<li>Sleek silver casing</li>
+	    				<li>Blue backlight</li>
+	    			</ul>
+
+	    			<a class="btn btn-success btn-lg" href="#">Add to basket</a>
+	    		</div>
+	    	</div>
+    	</div>
+    	<div id="push"></div>
+	</div>
+
+	<div id="footer">
+		<div class="container">
+			<p class="muted">jQuery Zoetrope plugin example created with love by <a href="http://zoetrope.io">Zoetrope</a></p>
+		</div>
+	</div>
+  </body>
+</html>
