@@ -1,0 +1,27 @@
+{
+  "name": "onepage-scroll",
+  "version": "1.3.1",
+  "author": "Pete R",
+  "main": [
+    "jquery.onepage-scroll.js",
+    "onepage-scroll.css"
+  ],
+  "ignore": [
+    "Demo",
+    "README.md"
+  ],
+  "dependencies": {
+    "jquery": "~1.10.2"
+  },
+  "homepage": "https://github.com/peachananr/onepage-scroll",
+  "_release": "1.3.1",
+  "_resolution": {
+    "type": "version",
+    "tag": "1.3.1",
+    "commit": "252829a55b0538424449e390fc5ba117e98ee448"
+  },
+  "_source": "git://github.com/peachananr/onepage-scroll.git",
+  "_target": "~1.3.1",
+  "_originalSource": "onepage-scroll",
+  "_direct": true
+}
