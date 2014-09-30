@@ -6,7 +6,9 @@ var ecstatic = require('ecstatic');
 gulp.task('watch', function(){
 	http.createServer(
 	    ecstatic({
-	        root: '.'
+	        root: '.',
+	        autoIndex : true,
+	        cache : 0.1,
 	    })
 	).listen(9000);
 	gulp.watch('.', []);
