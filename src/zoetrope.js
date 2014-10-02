@@ -437,7 +437,7 @@
 
 											state.preload = {
 												col: floor(col/(360 / state.colCount)),
-												row: row*(90/state.rowCount),
+												row: row/(90/state.rowCount),
 											};
 										}
 										var ret_index;
