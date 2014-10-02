@@ -99,11 +99,13 @@ with the following script in the `<span class="hljs-tag">&lt;<span class="hljs-t
 </blockquote>
 <h4 id="inline-inline-">Inline <code>inline</code></h4>
 <p>By setting the <code>inline</code> attribute to <code>false</code>, the ZEV will display in the popover, rather than inline. See <a href="#inline">Inline</a>.</p>
-<h4 id="slideshow-grouping-rel-">Slideshow grouping <code>rel</code></h4>
+<h4 id="gallery-gallery-">Gallery <code>gallery</code></h4>
+<p>Enable gallery image display of the first 4 images from <code>gallery-images</code> with this flag, defaults to false. This is not implicit since gallery images may be used in otherways in the future.</p>
 <blockquote>
-<p>Only applies to popover style image.</p>
+<p>This setting has to add some extra height (25% more than normal) to the viewer so that theres enough room for 4 thumbs.</p>
 </blockquote>
-<p>For situations where multiple ZEV instances are used in popovers on the same page, setting the same <code>rel</code> value for multiple ZEV instances will show next/previous buttons on the popover.</p>
+<h4 id="gallery-images-gallery-images-">Gallery Images <code>gallery-images</code></h4>
+<p>This attribute is a JSON encoded array of objects of the form <code>{&quot;position&quot;: x, ...}</code> which is used to describe an ordered list of gallery image indicies from 0-108. Normally used with <code>gallery</code> for now, but is suitable for other applications in the future.</p>
 <h4 id="preload-images-preload-">Preload Images <code>preload</code></h4>
 <blockquote>
 <p>To be considerate of bandwidth, this should not be used for multiple ZEV instances on the same page!</p>

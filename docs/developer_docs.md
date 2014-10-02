@@ -104,15 +104,18 @@ Most integration modules would store a tuple of the `image` id and `start-positi
 #### Inline `inline`
 By setting the `inline` attribute to `false`, the ZEV will display in the popover, rather than inline. See [Inline](#inline).
 
-#### Slideshow grouping `rel`
->Only applies to popover style image.
+#### Gallery `gallery`
+Enable gallery image display of the first 4 images from `gallery-images` with this flag, defaults to false. This is not implicit since gallery images may be used in otherways in the future.
 
-For situations where multiple ZEV instances are used in popovers on the same page, setting the same `rel` value for multiple ZEV instances will show next/previous buttons on the popover.
+> This setting has to add some extra height (25% more than normal) to the viewer so that theres enough room for 4 thumbs.
+
+#### Gallery Images `gallery-images`
+This attribute is a JSON encoded array of objects of the form `{"position": x, ...}` which is used to describe an ordered list of gallery image indicies from 0-108. Normally used with `gallery` for now, but is suitable for other applications in the future.
 
 #### Preload Images `preload`
 >To be considerate of bandwidth, this should not be used for multiple ZEV instances on the same page!
 
-By setting the `preload` attribute, the ZEV will preload the image resources for the viewer, which clearly allows for a smoother experience for the client. Resources will not be loaded until after `window.onload` has fired. 
+By setting the `preload` attribute, the ZEV will preload the image resources for the viewer, which clearly allows for a smoother experience for the client. Resources will not be loaded until after `window.onload` has fired.
 
 #### Show Call to Action `show-cta`
 By default the ZEV shows a few strings and icons to indicate that the ZEV is more than a static image. These strings are currently avaliable in 5 languages (`en`,`fr`,`de`,`it` and `hi`), with more being added all the time. If a specific new langauage is needed, please contact us.
