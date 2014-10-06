@@ -13,3 +13,13 @@ gulp.task('watch', function(){
 	).listen(9000);
 	gulp.watch('.', []);
 });
+
+gulp.task('docs', function () {
+    var options = {
+        layout : 'linear',
+    };
+
+    return gulp.src('./docs')
+        .pipe(docco(options))
+        .pipe(gulp.dest('./docs'));
+});
