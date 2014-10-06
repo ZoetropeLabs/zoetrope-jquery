@@ -1,3 +1,10 @@
+<!-- jQuery header scripts -->
+<script src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
+<!-- Zoetrope Script -->
+<script src="//d34tuy4jppw3dn.cloudfront.net/v3/js/zoetrope.jquery.min.js"></script>
+<!-- Zoetrope Styles & icons -->
+<link type="text/css" rel="stylesheet" href="//d34tuy4jppw3dn.cloudfront.net/v3/css/zoetrope.jquery.min.css" media="all">
+
 # Zoetrope Engage&trade; Image Viewer
 
 The Zoetrope Engage&trade; Image Viewer (refered to as 'ZEV' from here on in) is a pure html/js/css widget to display the 3D photography created by Zoetrope. The widget is built as a jQuery plugin but is also available as a self contained module. This document is aimed at developers who are creating integrations with the ZEV.
@@ -7,27 +14,29 @@ Assuming that the Zoetrope JS and CSS has been included (for this example they'r
 ```html
 
 <img
-    src="https://s3-eu-west-1.amazonaws.com/zoetrope-alpha/52ea7cc2c24f284cfaa26be8/500/0.jpg"
+    src="https://d34tuy4jppw3dn.cloudfront.net/zoetrope-alpha/53beb20fc24f287836739c98/500/0.jpg"
     class="zoe-engage-image"
-    data-zoe-site="testingtesting"
-    data-zoe-image="530b5d6cc24f281c908745ec"
-    data-zoe-inline="true"
+    data-zoe-image="53beb20fc24f287836739c98"
     width="500"
     height="500"
     />
+```
 
 with the following script in the `<head>` of the page:
-```html	
-	<script src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
-	<script src="//d34tuy4jppw3dn.cloudfront.net/v3/js/zoetrope.jquery.min.js"></script>
-	<link type="text/css" rel="stylesheet" href="//d34tuy4jppw3dn.cloudfront.net/v3/css/zoetrope.jquery.min.css" media="all">
+```html
+    <!-- jQuery needs to be before Zoetrope -->
+    <script src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
+    <!-- Zoetrope Script -->
+    <script src="//d34tuy4jppw3dn.cloudfront.net/v3/js/zoetrope.jquery.min.js"></script>
+    <!-- Zoetrope Styles & icons -->
+    <link type="text/css" rel="stylesheet" href="//d34tuy4jppw3dn.cloudfront.net/v3/css/zoetrope.jquery.min.css" media="all">
 
 ```
 
 Which will result in the folling:
 
 > Example 1:
-><img src="https://s3-eu-west-1.amazonaws.com/zoetrope-alpha/52ea7cc2c24f284cfaa26be8/500/0.jpg" class="zoe-engage-image" data-zoe-site="abc123" data-zoe-image="530b5d6cc24f281c908745ec" width="500" height="500" data-zoe-rel="ab" data-zoe-inline="true"/>
+><img src="https://d34tuy4jppw3dn.cloudfront.net/zoetrope-alpha/53beb20fc24f287836739c98/500/0.jpg" class="zoe-engage-image" data-zoe-site="abc123" data-zoe-image="53beb20fc24f287836739c98" width="500" height="500" data-zoe-rel="ab" data-zoe-inline="true"/>
 
 The `img` tag is replaced with the ZEV after loading. by using the `img` as ths initial element we are able to provided a fallback image, which can load very quickly (way before `window.onload` fires).
 
@@ -47,23 +56,30 @@ The ZEV detects the screen size of the client and uses this to decide which reso
 The scripts and styles are served from the Zoetrope CDN so that updates can be seemlessly provided to our clients. Currently Zoetrope is using cloudfront in order to provide SSL support. All ZEV files are served from `https://d34tuy4jppw3dn.cloudfront.net`, though images for the ZEV may be hosted from other locations if self hosting the image resources.
 
 ## JSON Feeds
+Feeds are not core to the Zoetrope viewer par say, however they are very useful to implement on the server side as a means of seemlessly integrating the Zoetrope system with your platform. Feeds should be matched on the SKU code's which we ask clients to provide us with when photography commences\*.
+
+
+
+>\*: Though they can be updated at any time in the online Zoetrope admin console.
 
 ### Example
 The JSON feed has been kept as simple as possible: an array of objects.
 
 ```javascript
 [
-	{
-		"sku": "abc",
-		"zoetrope_id":"5346ab94c24f28777972d7cf",
-		"zoetrope_start_position":"0"
-	},
-	...
-	{
-		"sku": "def",
-		"zoetrope_id":"53455f67c24f282735cb9806",
-		"zoetrope_start_position":"20"
-	}
+    {
+        "sku": "abc",
+        "zoetrope_id":"53beb20fc24f287836739c98",
+        "zoetrope_start_position":"0",
+        "zoetrope_gallery_positions" : [...]
+    },
+    ...
+    {
+        "sku": "def",
+        "zoetrope_id":"53bd4f33c24f28335bb92360",
+        "zoetrope_start_position":"20",
+        "zoetrope_gallery_positions" : [...]
+    }
 ]
 ```
 
@@ -73,11 +89,11 @@ The ZEV will look for all elements on the page which have the class `zoe-engage-
 ### Inline (default)
 By setting the inline attribute, the ZEV will replace the starting image with the interactive version in its place. This is well suited for use in product pages and places where there is only one image inline.
 
-### Popover 
+### Popover
 If you'd prefer not to display the ZEV inline, it can also be shown in a popover. This has the advantage that it allows greater cross device compatibility for sites which are not fully responsive. If you are using multiple ZEVs on a page, we recommend using the popover option to decrease resource usgae.
 
 >Example:
-><img src="https://s3-eu-west-1.amazonaws.com/zoetrope-alpha/52ea7cc2c24f284cfaa26be8/500/0.jpg" class="zoe-engage-image" data-zoe-site="abc123" data-zoe-image="52ea7cc2c24f284cfaa26be8" data-zoe-inline="false" width="500" height="500">
+><div style="max-width:100%; width: 500px;"><img src="https://s3-eu-west-1.amazonaws.com/zoetrope-alpha/53bd4f33c24f28335bb92360/500/0.jpg" class="zoe-engage-image" data-zoe-site="abc123" data-zoe-image="53bd4f33c24f28335bb92360" data-zoe-inline="false" width="500" height="500">
 
 ## Settings
 The ZEV makes use of html 5 `data-*` attributes to control the viewer settings. Due to this, an html 5 doc type (`<!doctype html>`) should be used in order to pass validation. There's an overview of `data-*` attributes [here](http://ejohn.org/blog/html-5-data-attributes/). All settings are prefixed with `data-zoe-` where the `zoe-` acts as a Zoetrope name space.
@@ -133,37 +149,7 @@ There are certain events which can be hooked in to which will allow listening fo
 Whenever the frame changes, this event will be fired
 
 ```javascript
-	$('.zoe-wrapper').on('framechange', function(e, newFrameIndex){
-	    //Do something with the `newFrameIndex` argument
-	});
+    $('.zoe-wrapper').on('framechange', function(e, newFrameIndex){
+        //Do something with the `newFrameIndex` argument
+    });
 ```
-
-<!-- Add the Zoetrope Scripts -->
-<script>
-!function(doc,tag,tag2,id,baseUrl){
-
-	var js,
-		head=doc.getElementsByTagName('head')[0],
-		p = document.location.protocol === 'https:' ? 'https:' : 'http:';
-
-	if(!doc.getElementById(id)){
-		js=doc.createElement(tag);
-		js.id='jq';
-		js.src="http://code.jquery.com/jquery-1.11.0.min.js"
-		js.type="text/javascript";
-		jsz = doc.createElement(tag);
-		jsz.id=id;
-		jsz.type="text/javascript";
-		jsz.src= p+"//d34tuy4jppw3dn.cloudfront.net/v3/js/zoetrope.jquery.js";
-		head.appendChild(js);
-		head.appendChild(jsz);
-
-		css=doc.createElement(tag2);
-		css.rel="stylesheet";
-		css.href=p+"//d34tuy4jppw3dn.cloudfront.net/v3/css/zoetrope.jquery.min.css";
-		head.appendChild(css);
-	}
-
-}(document,"script","link","zoetrope-wjs",'');
-</script>
-
