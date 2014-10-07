@@ -5,30 +5,38 @@ This repo contains the source for [Zoetrope's](http://zoetrope.io) 3D photograph
 
 This is aimed at helping our clients to develop new and interesting product imaging experiences.
 
-We are aware how bad the documentation is - please bare with us :)
+## Examples
+We're working on a set of examples to demonstrate what can be done with the Zoetrope viewer - they're pending a review by our graphic designer at present!
+* [Example 1 - Custom intro animation ](http://zoetropeimaging.github.io/zoetrope-jquery/example1/)
+* [Example 2 - Gallery images](http://zoetropeimaging.github.io/zoetrope-jquery/example2/)
+* [Example 3 - scroll presentation](http://zoetropeimaging.github.io/zoetrope-jquery/example3/)
 
 ## Instalation
 
+```bash
+git clone https://github.com/ZoetropeImaging/zoetrope-jquery.git
+cd zoetrope-jquery
+sudo npm install .
+gulp
+```
+
 1. Clone the Repo
 2. Make sure [nodejs](http://nodejs.org/download/) is installed.
-3. Install depedencies (from root directory):
-```bash
-	sudo npm install .
-```
-4. build
-```bash
-	gulp
-```
+3. Install depedencies (from project directory). This will install gulp globally
+4. Build
+
+## Developer docs
+Full API documentation with basic implementation examples is available here: [Zoetrope Viewer Documentation](http://zoetropeimaging.github.io/zoetrope-jquery/docs/developer_docs.html)
 
 ## Gulp task runner tasks
 
-### `default`
+### default `gulp`
 This will build a one off and place it in dist/&lt;your branch&gt;/.
 
-### `watch`
+### watch `gulp watch`
 Build and spawn an HTTP server to serve up a demo. The code will be rebuilt on each save.
 
-### `fetch`
+### fetch `gulp fetch`
 Will download both translation files [from Zoetropes google docs](http://zoetrope.io/tech-blog/javascript-translations-google-drive-forms-and-gulpjs) and [mobile browser detection](http://detectmobilebrowsers.com/)
 
 ##Library Acknowledgements
