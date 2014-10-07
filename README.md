@@ -11,7 +11,7 @@ We're working on a set of examples to demonstrate what can be done with the Zoet
 * [Example 2 - Gallery images](http://zoetropeimaging.github.io/zoetrope-jquery/example2/)
 * [Example 3 - scroll presentation](http://zoetropeimaging.github.io/zoetrope-jquery/example3/)
 
-## Instalation
+## Installation
 
 ```bash
 git clone https://github.com/ZoetropeImaging/zoetrope-jquery.git
