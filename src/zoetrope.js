@@ -276,7 +276,7 @@
 										$this.before($trigger);
 										$trigger.prepend($this);
 										$trigger.on('click', function(){
-											$trigger.before($wrapper);
+											$trigger.before($this);
 											$trigger.remove();
 											$this.trigger('setup');
 										})
@@ -609,7 +609,7 @@
 
 								'mousedown touchstart': function(e){
 									var state = get('state');
-									if(state.zoomed) return;
+									if(typeof state == 'undefined' || state.zoomed) return;
 									return $this.trigger('down', [pointer(e).clientX, pointer(e).clientY, e]) && e.give;
 								},
 
@@ -737,6 +737,7 @@
 								// Bonus scroll handler
 								mousewheel: function(e){
 									var state = get('state');
+									if(typeof state == 'undefined') return;
 									if (e.originalEvent.wheelDelta >= 0) {
 										if(!state.zoomed && $this.find(dot(pre+'btn-zoom')).length){
 											$this.find(dot(pre+'btn-zoom')).click();
@@ -751,16 +752,19 @@
 
 								'touchstart.zoom': function(e){
 									var state = get('state');
+									if(typeof state == 'undefined') return;
 									state.touchstart = e.originalEvent.touches;
 								},
 
 								'touchend.zoom' : function(e){
 									var state = get('state');
+									if(typeof state == 'undefined') return;
 									state.touchstart = null;
 								},
 
 								'touchmove.zoom': function(e){
 									var state = get('state');
+									if(typeof state == 'undefined') return;
 									if(state.touchstart && e.originalEvent.touches.length == 2){
 										var pinch1_f1 = state.touchstart[0],
 											pinch1_f2 = state.touchstart[1],
@@ -793,7 +797,7 @@
 										zoomUrl = getZoomSrc(state.blittedFrameIndex),
 										offset = $this.offset(),
 										size = $this.outerWidth();
-
+									if(typeof state == 'undefined') return;
 									//add the image to zoom
 									$('<img>')
 										.attr('src', zoomUrl)
@@ -824,6 +828,7 @@
 								zoomEnd: function(){
 									var state = get('state'),
 										$zoomDiv = $this.find(dot(zoe.cls.zoom));
+									if(typeof state == 'undefined') return;
 									$zoomDiv.stop().fadeTo(100, 0, function(){
 										$zoomDiv.css('display', 'none').empty(); // Delete the zoom image
 									});
