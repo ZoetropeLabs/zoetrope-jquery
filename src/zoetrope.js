@@ -319,6 +319,8 @@
 									$this.stop(true, true);
 									zoe.pool.off(on.pool);
 									$(window).off(on.window);
+									$this.replaceWith($original);
+									delete $this;
 								},
 
 								// Does most of the setup, following from on.setup()
@@ -797,7 +799,7 @@
 										zoomUrl = getZoomSrc(state.blittedFrameIndex),
 										offset = $this.offset(),
 										size = $this.outerWidth();
-									if(typeof state == 'undefined') return;
+
 									//add the image to zoom
 									$('<img>')
 										.attr('src', zoomUrl)
@@ -828,7 +830,6 @@
 								zoomEnd: function(){
 									var state = get('state'),
 										$zoomDiv = $this.find(dot(zoe.cls.zoom));
-									if(typeof state == 'undefined') return;
 									$zoomDiv.stop().fadeTo(100, 0, function(){
 										$zoomDiv.css('display', 'none').empty(); // Delete the zoom image
 									});
