@@ -54,6 +54,7 @@ var paths = {
 	less: 'less/style.less',
 	htc: 'less/backgroundsize.min.htc',
 	testHTML: 'src/test.html',
+	testHTMLFiles: ['src/testInline.html','src/testPopover.html'],
 	docs:'docs/developer_docs.md',
 	languageStringsCSV: 'https://docs.google.com/spreadsheets/d/1y5McuTIe4G7F0xKM6JPm6STRKOHxE1G2IkDMiSxSeKo/export?format=csv&id=1y5McuTIe4G7F0xKM6JPm6STRKOHxE1G2IkDMiSxSeKo&gid=52872048',
 	mobileDetect: 'http://detectmobilebrowsers.com/download/jquery',
@@ -273,10 +274,13 @@ gulp.task('detect-mobile', function(){
 });
 
 gulp.task('html', function () {
-	return gulp.src(paths.testHTML)
-		.pipe(replace(replacements))
-		.pipe(rename('index.html'))
-		.pipe(gulp.dest(paths.dist));
+	 gulp.src(paths.testHTML)
+	.pipe(replace(replacements))
+	.pipe(rename('index.html'))
+	.pipe(gulp.dest(paths.dist));
+	 return gulp.src(paths.testHTMLFiles)
+		 .pipe(replace(replacements))
+		 .pipe(gulp.dest(paths.dist));
 });
 
 gulp.task('javascript', function () {
