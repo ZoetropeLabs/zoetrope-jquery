@@ -42,6 +42,6 @@
     "winston": "^0.7.3"
   },
   "scripts": {
-    "preinstall": "npm i -g gulp grunt grunt-cli protractor docco"
+    "preinstall": "npm i -g gulp grunt grunt-cli protractor docco; cd lib/keen; npm install"
   }
 }

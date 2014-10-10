@@ -392,9 +392,8 @@ gulp.task('watch', ['default'], function () {
 });
 
 gulp.task('build-keen', function() {
-	exec('cd lib/keen; grunt', function(err,stdout,stderr) {
-		console.log(stderr);
-	});
+	var result = sh.exec('cd lib/keen; grunt')
+	console.log(result.stderr);
 });
 
 
