@@ -11,11 +11,10 @@ Assuming that the Zoetrope JS and CSS has been included (for this example they'r
     class="zoe-engage-image"
     data-zoe-site="testingtesting"
     data-zoe-image="530b5d6cc24f281c908745ec"
-    data-zoe-inline="true"
     width="500"
     height="500"
     />
-
+```
 with the following script in the `<head>` of the page:
 ```html	
 	<script src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
@@ -24,10 +23,11 @@ with the following script in the `<head>` of the page:
 
 ```
 
-Which will result in the folling:
+Which will result in the following:
 
-> Example 1:
-><img src="https://s3-eu-west-1.amazonaws.com/zoetrope-alpha/52ea7cc2c24f284cfaa26be8/500/0.jpg" class="zoe-engage-image" data-zoe-site="abc123" data-zoe-image="530b5d6cc24f281c908745ec" width="500" height="500" data-zoe-rel="ab" data-zoe-inline="true"/>
+Example:
+
+<img src="http://d34tuy4jppw3dn.cloudfront.net/53bd2dd0c24f28335bb9235c/500/0.jpg" class="zoe-engage-image" data-zoe-site="docs" data-zoe-image="53bd2dd0c24f28335bb9235c" data-zoe-inline="true" />
 
 The `img` tag is replaced with the ZEV after loading. by using the `img` as ths initial element we are able to provided a fallback image, which can load very quickly (way before `window.onload` fires).
 
@@ -76,15 +76,15 @@ By setting the inline attribute, the ZEV will replace the starting image with th
 ### Popover 
 If you'd prefer not to display the ZEV inline, it can also be shown in a popover. This has the advantage that it allows greater cross device compatibility for sites which are not fully responsive. If you are using multiple ZEVs on a page, we recommend using the popover option to decrease resource usgae.
 
->Example:
-><img src="https://s3-eu-west-1.amazonaws.com/zoetrope-alpha/52ea7cc2c24f284cfaa26be8/500/0.jpg" class="zoe-engage-image" data-zoe-site="abc123" data-zoe-image="52ea7cc2c24f284cfaa26be8" data-zoe-inline="false" width="500" height="500">
+Example:
+
+<img src="https://s3-eu-west-1.amazonaws.com/zoetrope-alpha/53bd2dd0c24f28335bb9235c/500/0.jpg" class="zoe-engage-image" data-zoe-site="docs" data-zoe-image="53bd2dd0c24f28335bb9235c" data-zoe-inline="false" width="500" height="500">
 
 ## Settings
 The ZEV makes use of html 5 `data-*` attributes to control the viewer settings. Due to this, an html 5 doc type (`<!doctype html>`) should be used in order to pass validation. There's an overview of `data-*` attributes [here](http://ejohn.org/blog/html-5-data-attributes/). All settings are prefixed with `data-zoe-` where the `zoe-` acts as a Zoetrope name space.
 
 > As an example of the name spacing, the `image` setting is added to the html in the attribute `data-zoe-image="[image id]"`.
 
-Zoetrope images are
 
 ### Compulsory Settings
 #### Image `image`
@@ -166,4 +166,3 @@ Whenever the frame changes, this event will be fired
 
 }(document,"script","link","zoetrope-wjs",'');
 </script>
-

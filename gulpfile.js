@@ -26,6 +26,7 @@ var fs = require('fs'),
 	docco = require("gulp-docco"),
 	gfi = require('gulp-file-insert');
 	exec = require('gulp-exec');
+	runSequence = require('run-sequence');
 
 
 var port = '8888';
@@ -54,6 +55,7 @@ var paths = {
 	less: 'less/style.less',
 	htc: 'less/backgroundsize.min.htc',
 	testHTML: 'src/test.html',
+	testHTMLFiles: ['src/testInline.html','src/testPopover.html'],
 	docs:'docs/developer_docs.md',
 	languageStringsCSV: 'https://docs.google.com/spreadsheets/d/1y5McuTIe4G7F0xKM6JPm6STRKOHxE1G2IkDMiSxSeKo/export?format=csv&id=1y5McuTIe4G7F0xKM6JPm6STRKOHxE1G2IkDMiSxSeKo&gid=52872048',
 	mobileDetect: 'http://detectmobilebrowsers.com/download/jquery',
@@ -267,16 +269,25 @@ gulp.task('lang-strings', function () {
 });
 
 gulp.task('detect-mobile', function(){
-	return download(paths.mobileDetect)
+	var prom = Q.defer();
+
+	download(paths.mobileDetect)
 		.pipe(rename('detectmobilebrowser.js'))
-		.pipe(gulp.dest('lib'));
+		.pipe(gulp.dest('lib'))
+		.on('end', function() {
+			prom.resolve();
+		});
+	return prom.promise;
 });
 
 gulp.task('html', function () {
-	return gulp.src(paths.testHTML)
-		.pipe(replace(replacements))
-		.pipe(rename('index.html'))
-		.pipe(gulp.dest(paths.dist));
+	 gulp.src(paths.testHTML)
+	.pipe(replace(replacements))
+	.pipe(rename('index.html'))
+	.pipe(gulp.dest(paths.dist));
+	 return gulp.src(paths.testHTMLFiles)
+		 .pipe(replace(replacements))
+		 .pipe(gulp.dest(paths.dist));
 });
 
 gulp.task('javascript', function () {
@@ -388,16 +399,20 @@ gulp.task('watch', ['default'], function () {
 });
 
 gulp.task('build-keen', function() {
-	exec('cd lib/keen; grunt', function(err,stdout,stderr) {
-		console.log(stderr);
-	});
+	var result = sh.exec('cd lib/keen; grunt')
+	console.log(result.stderr);
 });
 
 
 // Get some language strings etc
-gulp.task('fetch', ['lang-strings', 'detect-mobile']);
+gulp.task('fetch', ['detect-mobile','lang-strings', 'build-keen']);
+
+gulp.task('build-all', ['less', 'javascript', 'html']);
+
 
 // The default task (called when you run `gulp` from cli)
-gulp.task('default', ['fetch', 'build-keen', 'less', 'javascript', 'html']);
+gulp.task('default', function() {
+	runSequence('fetch', 'build-all');
+});
 
 
