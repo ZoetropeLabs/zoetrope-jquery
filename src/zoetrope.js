@@ -157,7 +157,7 @@
 			'galleryImages' : {init : [], type: 'array'},
 			'cdn' : {type: 'string', init: '{{image-cdn:url}}'},
 			'break' : {type: 'number', init: 2500},
-			'lang': {type: 'string', process: false, init: (window.navigator.userLanguage || window.navigator.language)},
+			'lang': {type: 'string', init: (window.navigator.userLanguage || window.navigator.language)},
 			'size' : {type: 'enum', init: 0, options:[0,250,500,1000]}
 		},
 
