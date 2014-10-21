@@ -12,9 +12,9 @@ install:
     - sudo apt-get update -qq
     - sudo apt-get install -y graphicsmagick
     - cd ..
-    - git clone git@github.com:ZoetropeImaging/regression-tests.git
+    - git clone https://github.com/ZoetropeImaging/regression-tests.git
     - cd regression-tests
-    - git clone git@github.com:ZoetropeImaging/zoetrope-jquery.git
+    - git clone https://github.com/ZoetropeImaging/zoetrope-jquery.git
 
 before_script:
     - cd zoetrope-jquery
