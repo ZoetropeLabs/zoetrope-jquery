@@ -1,0 +1,35 @@
+language: node_js
+node_js:
+    - "0.10"
+
+
+env: 
+    global:
+        - secure : "KN0Dhl3iIsidBZcudersyP9y6I4jkoT2d3nMrJ7IcnpzwlC1StaV2HuuMpvkwPHjvYdPe/e/qbZFBg8gDALI788jX44h/LB6wyItKW2bYctfLRrzbUoz2wo1U09k0dfvcn4SPyn/JsVEey4tDHCiwa+JwKr+5jT5mr18GSDwWHw="
+        - secure : "iUjRqcK2iadH4azsS41NZd9vyZe1XTQd0z1jQP/TIT+5ycl3yt8vU0wisbdflCRpI5EZbwQdtoJ6EZ/3N77bLcfOfKfI0lypSM3L8U00ARH1mmpg0gD68VzvxUinX0GbdTKe+lY2XPxVLEAAlnDXER3zQl3Dmo5wVqdsBiAOJ2M="
+
+addons:
+    sauce_connect: true
+
+install:
+    - npm install
+    - sudo apt-get update -qq
+    - sudo apt-get install -y graphicsmagick
+    - cd ..
+    - git clone git@github.com:ZoetropeImaging/regression-tests.git
+    - cd regression-tests
+    - git clone git@github.com:ZoetropeImaging/zoetrope-jquery.git
+
+before_script:
+    - cd zoetrope-jquery
+    - npm install
+    - gulp
+    - cd ..
+    - http-server -p 8888 zoetrope-jquery/dist & # start a Web server
+    - sleep 3 # give Web server some time to bind to sockets, etc
+
+script:
+    - cd tests
+    - echo $SAUCE_USERNAME
+    - protractor testSuite.conf.js
+
