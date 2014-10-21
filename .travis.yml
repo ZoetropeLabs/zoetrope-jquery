@@ -1,8 +1,7 @@
 language: node_js
+
 node_js:
-    - "0.10"
-
-
+    - '0.10'
 
 addons:
     sauce_connect: true
@@ -21,11 +20,14 @@ before_script:
     - npm install
     - gulp
     - cd ..
-    - http-server -p 8888 zoetrope-jquery/dist & # start a Web server
-    - sleep 3 # give Web server some time to bind to sockets, etc
+    - http-server -p 8888 zoetrope-jquery/dist &
+    - sleep 3
 
 script:
     - cd tests
     - echo $SAUCE_USERNAME
     - protractor testSuite.conf.js
 
+notifications:
+    slack:
+        secure: Z0vtEJkHu7iDgSXMsVbsTmcn+N1GzBM6b2Ijx16DY2BCitt9h3tiSKUgazd3ULP6/9s/bKd0ZzkTIFTmsBszF7kh12uGrs2zB9GP20zoJiQ+e82toWkp9nV6Wx21f6bLiN+7ejiJqG3iV+2SUVyWvYchm4acu63kv1bVHxDuATI=
