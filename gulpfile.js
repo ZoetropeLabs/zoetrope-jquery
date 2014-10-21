@@ -401,6 +401,7 @@ gulp.task('watch', ['default'], function () {
 gulp.task('build-keen', function() {
 	var result = sh.exec('cd lib/keen; grunt')
 	console.log(result.stderr);
+	console.log(result.stdout);
 });
 
 
