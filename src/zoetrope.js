@@ -179,6 +179,7 @@
 			zoomUpdated: true, //used to sync zoom with ticker
 			resizeUpdated: true,
 			touchstart: null, //used for pinch zoom
+			animate: true, // If animation is enabled.
 			preloadProgress : 0, //index
 			preloadStartTime : 0, // start time for end time estimation
 			progressPercentage : 0, //set separately for the progress bar
@@ -339,7 +340,8 @@
 									// Mobile mode?
 									if($.browser.mobile){
 										state.colCount = 18; //half images
-										zoe.fps = 15; // reduce frame rate (less than 1/3rd of normal)
+										zoe.fps = 25; // reduce frame rate (less than 1/3rd of normal)
+										state.animate = false; // No animation to make it more responsive.
 									}
 
 									// take frame and work out angle
@@ -988,22 +990,32 @@
 										if($newFrame == null || $oldFrame == null) return;
 										$newFrame.addClass(zoe.cls.newFrame);
 
-										//animation setup
-										$newFrame.hide();
-										$oldFrame.stop(true, true);
-										$this.prepend($newFrame);
-										state.blittedFrameIndex = displayIndex;
+										// Sometimes we might not animate to increase performance.
+										if(state.animate){
+											// Animation setup.
+											$newFrame.hide();
+											$oldFrame.stop(true, true);
+											$this.prepend($newFrame);
+											state.blittedFrameIndex = displayIndex;
 
-										$newFrame.fadeIn({
-											duration: 39,
-											easing : 'linear',
-											queue: false,
-											complete: function(){
-												$oldFrame.detach();
-												$newFrame.removeClass(zoe.cls.newFrame);
-												$this.trigger('framechange',[state.blittedFrameIndex]);
-											}
-										});
+											$newFrame.fadeIn({
+												duration: 39,
+												easing : 'linear',
+												queue: false,
+												complete: function(){
+													$oldFrame.detach();
+													$newFrame.removeClass(zoe.cls.newFrame);
+													$this.trigger('framechange',[state.blittedFrameIndex]);
+												}
+											});
+										}
+										else{
+											// No animation version.
+											$this.prepend($newFrame);
+											state.blittedFrameIndex = displayIndex;
+											$oldFrame.detach();
+											$newFrame.removeClass(zoe.cls.newFrame);
+										}
 
 
 									}
