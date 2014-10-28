@@ -24,9 +24,12 @@ var fs = require('fs'),
 	StringDecoder = require('string_decoder').StringDecoder,
 	through = require('through2'),
 	docco = require("gulp-docco"),
-	gfi = require('gulp-file-insert');
-	exec = require('gulp-exec');
-	runSequence = require('run-sequence');
+	gfi = require('gulp-file-insert'),
+	exec = require('gulp-exec'),
+	runSequence = require('run-sequence'),
+	svg2png = require('gulp-rsvg'),
+	imagemin = require('gulp-imagemin'),
+	pngcrush = require('imagemin-pngcrush');
 
 
 var port = '8888';
@@ -61,6 +64,7 @@ var paths = {
 	mobileDetect: 'http://detectmobilebrowsers.com/download/jquery',
 	dist: 'dist/' + gitBranch,
 	keen: 'lib/keen',
+	svgs: 'img/svg/*.svg'
 };
 
 var module_name = "zoetrope.jquery";
@@ -399,11 +403,21 @@ gulp.task('watch', ['default'], function () {
 });
 
 gulp.task('build-keen', function() {
-	var result = sh.exec('cd lib/keen; grunt')
+	var result = sh.exec('cd lib/keen; grunt');
 	console.log(result.stderr);
 	console.log(result.stdout);
 });
 
+
+gulp.task('convert-images', function(cb) {
+	return gulp.src(paths.svgs)
+		.pipe(svg2png())
+		.pipe(imagemin({
+			progressive:true,
+			use:[pngcrush()]
+		}))
+		.pipe(gulp.dest(paths.dist + '/img'));
+});
 
 // Get some language strings etc
 gulp.task('fetch', ['detect-mobile','lang-strings', 'build-keen']);
@@ -416,4 +430,5 @@ gulp.task('default', function() {
 	runSequence('fetch', 'build-all');
 });
 
-
+var imagemin = require('gulp-imagemin');
+var pngcrush = require('imagemin-pngcrush');
