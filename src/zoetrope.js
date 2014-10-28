@@ -657,7 +657,6 @@
 										var change = delta.x / (width/(360)),
 											// Add 360 to prevent it ever going negative.
 											newCol = (state.col + change + 360) % 360;
-										console.log(change, state.col, state.blittedFrameIndex);
 										state.col = newCol;
 										// update for velocity calcs
 										state.delta_cursor.push(delta.x)
