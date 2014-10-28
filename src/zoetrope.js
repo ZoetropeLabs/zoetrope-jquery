@@ -441,7 +441,6 @@
 													url = getImageSrc(index);
 
 												$image.attr('src', url);
-												console.log($image);
 												$gallery.append($image);
 												//animation bind
 												$image.on('click mouseover', function(){
@@ -644,8 +643,8 @@
 									state.updated = false;
 
 									var lastPanCursor = state.lastPanCursor,
-										delta= { x: x - lastPanCursor.x, y: y - lastPanCursor.y },
-										abs_delta= { x: abs(delta.x), y: abs(delta.y) },
+										delta = { x: x - lastPanCursor.x, y: y - lastPanCursor.y },
+										abs_delta = { x: abs(delta.x), y: abs(delta.y) },
 										width = $this.width(),
 										height = $this.height();
 
@@ -654,7 +653,7 @@
 											ev && (ev.give = false);
 										state.lastPanCursor.x = x;
 										//column change
-										var change = delta.x / (width/(360)),
+										var change = delta.x / (width/360),
 											// Add 360 to prevent it ever going negative.
 											newCol = (state.col + change + 360) % 360;
 										state.col = newCol;
@@ -975,7 +974,7 @@
 									}
 
 									var	blittedFrameIndex = state.blittedFrameIndex,
-										displayIndex = floor(state.col / (360/state.colCount)) + floor(state.row / (90/state.rowCount))*state.colCount;
+										displayIndex = floor(state.col / (360/state.colCount)) + min_max(0, 2, floor(state.row / (90/state.rowCount)))*state.colCount;
 
 									// `pan` syncing
 									state.updated = true;
