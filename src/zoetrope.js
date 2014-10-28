@@ -804,6 +804,8 @@
 										offset = $this.offset(),
 										size = $this.outerWidth();
 
+									$this.trigger('showButtons');
+
 									//add the image to zoom
 									$('<img>')
 										.attr('src', zoomUrl)
