@@ -637,7 +637,10 @@
 									var state = get('state');
 
 									// used to timer sync
-									if(!state.updated) return;
+									if(!state.updated){
+										ev && (ev.give = false);
+										return;
+									}
 									state.updated = false;
 
 									var lastPanCursor = state.lastPanCursor,
@@ -646,16 +649,16 @@
 										width = $this.width(),
 										height = $this.height();
 
-									//if we've moved more than one column
 									if (abs_delta.x > 0){
-										ev && (ev.give = false);
+										if(abs_delta.x > 5) // vetical tolerance
+											ev && (ev.give = false);
 										state.lastPanCursor.x = x;
 										//column change
 										var change = delta.x / (width/(360)),
-											// add 36 to prevent it ever going negative
+											// Add 360 to prevent it ever going negative.
 											newCol = (state.col + change + 360) % 360;
+										console.log(change, state.col, state.blittedFrameIndex);
 										state.col = newCol;
-
 										// update for velocity calcs
 										state.delta_cursor.push(delta.x)
 										state.delta_cursor.shift()
@@ -666,7 +669,8 @@
 										var change = delta.y / (width/250),
 											newRow = min_max(0, 90, state.row + change);
 										//pass on the event if no change (helps with page scrolling)
-										if(newRow != state.row)
+										if((state.row != 0 && delta.y < 0)
+											|| (state.row != 90 && delta.y > 0))
 											ev && (ev.give = false);
 										state.row =  newRow;
 									}
