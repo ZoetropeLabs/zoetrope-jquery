@@ -177,6 +177,7 @@ gulp.task('less', ['htc'], function () {
 		.pipe(rename(module_name+'.css'))
 		.pipe(base64({
 			extensions: ['png', 'jpg', 'svg'],
+			baseDir: paths.dist,
 		})) // Embed the images in the CSS
 		.pipe(size({
 			showFiles: true
