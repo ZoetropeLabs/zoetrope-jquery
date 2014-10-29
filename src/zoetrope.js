@@ -148,7 +148,7 @@
 			'buttons' : {init: true}, // Show buttons - if you disable no zoom or help will be shown. mainly for auto-animate sitations.
 			'gallery' : {init: false}, //show gallery
 			'galleryImages' : {init : [], type: 'array'},
-			'cdn' : {type: 'string', init: '{{image-cdn:url}}'},
+			'cdn' : {type: 'string', init: window.location.protocol== 'https://' ? 'https://' + '{{image-cdn:url}}' : 'http://' + '{{image-cdn:url}}'},
 			'break' : {type: 'number', init: 2500},
 			'lang': {type: 'string', init: (window.navigator.userLanguage || window.navigator.language)},
 			'size' : {type: 'enum', init: 0, options:[0,250,500,1000]}
