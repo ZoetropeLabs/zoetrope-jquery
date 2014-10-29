@@ -39,6 +39,7 @@
     "lodash": "^2.4.1",
     "protractor": "^0.22.0",
     "q": "~1.0.1",
+    "rsvg": "^0.2.5",
     "run-sequence": "^1.0.1",
     "selenium-webdriver": "^2.41.0",
     "simple-glob": "^0.1.0",
