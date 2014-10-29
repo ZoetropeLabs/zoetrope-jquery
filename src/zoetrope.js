@@ -250,15 +250,6 @@
 								parseSettings($this, zoe.defaultSettings);
 								setLangage($this);
 
-								var state = get('state');
-								//set the protocol on the CDN if it doesn't contain
-								//a protocol already.
-								if(state.cdn.indexOf('://') == -1){
-									var prepend = (window.location.protocol == 'https://' ? 'https:' : 'http:');
-									if(state.cdn.indexOf('//') != 0) prepend += '//';
-									state.cdn = prepend + state.cdn;
-								}
-
 								//add markup and move this up to it.
 								var data = $this.data();
 								$wrapper = tmpl(zoe.html.widget);
@@ -332,6 +323,17 @@
 									// Init the instances state
 									var state = set('state', $.extend(true, {}, zoe.initState)),
 										startPosition = get('startPosition'); //start position needs to be set from the settings
+
+									//set the protocol on the CDN if it doesn't contain
+									//a protocol already.
+									var cdn = get('cdn')
+									if(cdn.indexOf('://') == -1){
+										var prepend = (window.location.protocol == 'https://' ? 'https:' : 'http:');
+										if(cdn.indexOf('//') != 0) prepend += '//';
+										cdn = prepend + cdn;
+									}
+									set('cdn', cdn);
+
 
 									//Choose an image size - accounts for mobile
 									// Sometimes size will be forced by the viewer options
