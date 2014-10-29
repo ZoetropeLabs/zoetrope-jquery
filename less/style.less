@@ -140,6 +140,7 @@ a.@{pre}engage-trigger img {
 
 	width: 100%;
 	max-width: 100%;
+	min-width:250px;
 	height: 100%;
 	box-sizing: content-box;
 	position: relative;
@@ -230,15 +231,18 @@ a.@{pre}engage-trigger img {
 	}
 
 	.@{pre}help-wrapper{
-		background-color: transparent;
+		.rgba-background(#1d1d1b, 0.8);
 		position: absolute;
 		top:35px;
 		right: 55px;
 		width:80%;
-		height:80%;
+		height:75%;
 		.border-radius;
 		overflow: hidden;
 		z-index: 4;
+
+		padding-top:10%;
+		box-sizing:padding-box;
 	}
 
 	.@{pre}help-triangle{
@@ -258,29 +262,15 @@ a.@{pre}engage-trigger img {
 		width:50%;
 		height: 50%;
 		float: left;
+		
 	}
 
-	.@{pre}help-spacer{
-		height: 100%;
-		width: 25%;
-		float: left;
-	}
-
-	.@{pre}help-section{
-		width: 50%;
-		float: left;
-		height: 100%;
-	}
-
-	.@{pre}help-pad{
-		width: 100%;
-		height: 10%;
-	}
 
 	.@{pre}help-image{
 		height: 50%;
-		width: 100%;
+		width: 50%;
 		display: block;
+		margin: 0 auto;
 		.hide-text();
 		.background-square(100%);
 	}
@@ -292,22 +282,18 @@ a.@{pre}engage-trigger img {
 		line-height: 30px;
 	}
 
-	.@{pre}help-spacer, .@{pre}help-section .@{pre}help-text, .@{pre}help-pad{
-		//normal background tiles
-		.rgba-background(#1d1d1b, 0.8);
-	}
 
 	.@{pre}help-rotate .@{pre}help-image{
-		background-image: url(../img/rotate.png);
+		background-image: url(../dist/{{branch}}/img/rotate.png);
 	}
 	.@{pre}help-elevate .@{pre}help-image{
-		background-image: url(../img/elevate.png);
+		background-image: url(../dist/{{branch}}/img/elevate.png);
 	}
 	.@{pre}help-zoom .@{pre}help-image{
-		background-image: url(../img/zoom.png);
+		background-image: url(../dist/{{branch}}/img/zoom.png);
 	}
 	.@{pre}help-brand .@{pre}help-image{
-		background-image: url(../img/zoetrope.png);
+		background-image: url(../dist/{{branch}}/img/zoetrope.png);
 	}
 	.@{pre}help-brand a{
 		font-size: 14px;
