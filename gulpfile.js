@@ -24,9 +24,12 @@ var fs = require('fs'),
 	StringDecoder = require('string_decoder').StringDecoder,
 	through = require('through2'),
 	docco = require("gulp-docco"),
-	gfi = require('gulp-file-insert');
-	exec = require('gulp-exec');
-	runSequence = require('run-sequence');
+	gfi = require('gulp-file-insert'),
+	exec = require('gulp-exec'),
+	runSequence = require('run-sequence'),
+	svg2png = require('gulp-rsvg'),
+	imagemin = require('gulp-imagemin'),
+	pngcrush = require('imagemin-pngcrush');
 
 
 var port = '8888';
@@ -61,14 +64,15 @@ var paths = {
 	mobileDetect: 'http://detectmobilebrowsers.com/download/jquery',
 	dist: 'dist/' + gitBranch,
 	keen: 'lib/keen',
+	svgs: 'img/svg/*.svg'
 };
 
 var module_name = "zoetrope.jquery";
 
 var cdns = {
-	'v3-dev': '//d34tuy4jppw3dn.cloudfront.net',
-	'master': '//d34tuy4jppw3dn.cloudfront.net',
-	v1: '//d34tuy4jppw3dn.cloudfront.net'
+	'v3-dev': 'd34tuy4jppw3dn.cloudfront.net',
+	'master': 'd34tuy4jppw3dn.cloudfront.net',
+	v1: 'd34tuy4jppw3dn.cloudfront.net'
 };
 
 var keenKeys = {
@@ -173,6 +177,7 @@ gulp.task('less', ['htc'], function () {
 		.pipe(rename(module_name+'.css'))
 		.pipe(base64({
 			extensions: ['png', 'jpg', 'svg'],
+			baseDir: paths.dist,
 		})) // Embed the images in the CSS
 		.pipe(size({
 			showFiles: true
@@ -396,19 +401,30 @@ gulp.task('watch', ['default'], function () {
 	}
 	gulp.watch(gfi, ['javascript']);
 	gulp.watch('less/*', ['less']);
+	gulp.watch(paths.svgs, ['convert-images'])
 });
 
 gulp.task('build-keen', function() {
-	var result = sh.exec('cd lib/keen; grunt')
+	var result = sh.exec('cd lib/keen; grunt');
 	console.log(result.stderr);
 	console.log(result.stdout);
 });
 
 
+gulp.task('convert-images', function(cb) {
+	return gulp.src(paths.svgs)
+		.pipe(svg2png())
+		.pipe(imagemin({
+			progressive:true,
+			use:[pngcrush()]
+		}))
+		.pipe(gulp.dest(paths.dist + '/img'));
+});
+
 // Get some language strings etc
 gulp.task('fetch', ['detect-mobile','lang-strings', 'build-keen']);
 
-gulp.task('build-all', ['less', 'javascript', 'html']);
+gulp.task('build-all', ['less', 'javascript', 'html', 'convert-images']);
 
 
 // The default task (called when you run `gulp` from cli)
@@ -416,4 +432,5 @@ gulp.task('default', function() {
 	runSequence('fetch', 'build-all');
 });
 
-
+var imagemin = require('gulp-imagemin');
+var pngcrush = require('imagemin-pngcrush');

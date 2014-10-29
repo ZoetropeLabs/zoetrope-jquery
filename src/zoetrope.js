@@ -102,21 +102,14 @@
 					<div class="<%=zoe.cls.helpWrapper%>"> \
 						<% for(var i=0; i < obj.sections.length; i++){ %> \
 							<div class="<%=zoe.cls.helpTile%> <%=obj.sections[i][\'class\']%>"> \
-								<div class="<%=zoe.cls.helpSpacer%>"> </div> \
-								<div class="<%=zoe.cls.helpSection%>"> \
-									<div class="<%=zoe.cls.helpColumnPad%>"> </div> \
-									<% if(typeof obj.sections[i].image !== "undefined") { %> \
-										<%=obj.sections[i].image %>\
-									<% } else { %>\
-										<div class="<%=zoe.cls.helpImage%>"> </div> \
-									<% } %>\
-									<div class="<%=zoe.cls.helpText%>"><%=obj.sections[i].text%></div> \
+								<% if(typeof obj.sections[i].image !== "undefined") { %> \
+									<%=obj.sections[i].image %>\
+								<% } else { %>\
+									<div class="<%=zoe.cls.helpImage%>"> </div> \
+								<% } %>\
+								<div class="<%=zoe.cls.helpText%>"><%=obj.sections[i].text%></div> \
 								</div> \
-								<div class="<%=zoe.cls.helpSpacer%>"> </div> \
-							</div> \
-						<% } %> \
-					 </div> \
-					</div>',
+						<% } %>',
 			zoom: '<div class="<%=zoe.cls.zoom%>"></div>',
 			progress: '<div class="<%=zoe.cls.progressWrapper%>"> \
 				<div class="zoe-progress-z zoe-background">&nbsp;</div> \
@@ -179,6 +172,7 @@
 			zoomUpdated: true, //used to sync zoom with ticker
 			resizeUpdated: true,
 			touchstart: null, //used for pinch zoom
+			animate: true, // If animation is enabled.
 			preloadProgress : 0, //index
 			preloadStartTime : 0, // start time for end time estimation
 			progressPercentage : 0, //set separately for the progress bar
@@ -256,6 +250,15 @@
 								parseSettings($this, zoe.defaultSettings);
 								setLangage($this);
 
+								var state = get('state');
+								//set the protocol on the CDN if it doesn't contain
+								//a protocol already.
+								if(state.cdn.indexOf('://') == -1){
+									var prepend = (window.location.protocol == 'https://' ? 'https:' : 'http:');
+									if(state.cdn.indexOf('//') != 0) prepend += '//';
+									state.cdn = prepend + state.cdn;
+								}
+
 								//add markup and move this up to it.
 								var data = $this.data();
 								$wrapper = tmpl(zoe.html.widget);
@@ -295,7 +298,7 @@
 									$this = $wrapper;
 									// Attach tiggers
 									on.zbox.attach();
-									$trigger.on(evns('click', 'zbox'), on.zbox.open);
+									$trigger.on(evns(['mouseup', 'touchstart'], 'zbox'), on.zbox.open);
 
 									//save this as the inital state
 									$original = $this.clone(true);
@@ -339,7 +342,8 @@
 									// Mobile mode?
 									if($.browser.mobile){
 										state.colCount = 18; //half images
-										zoe.fps = 15; // reduce frame rate (less than 1/3rd of normal)
+										zoe.fps = 25; // reduce frame rate (less than 1/3rd of normal)
+										state.animate = false; // No animation to make it more responsive.
 									}
 
 									// take frame and work out angle
@@ -383,13 +387,13 @@
 												$btn = tmpl(zoe.html.button, contents);
 
 											$btn.data(oddClickName, true);
-											$btn.click(function(){
+											$btn.on('mouseup touchstart',function(){
 												//callbacks that add the event triggering on $this
 												$this.stop(); //cancel animations
 												if($btn.data(oddClickName)){
 													$(this).addClass(zoe.cls.buttonActive);
 													//deactivate other buttons
-													$btn.siblings(dot(zoe.cls.buttonActive)).click();
+													$btn.siblings(dot(zoe.cls.buttonActive)).mouseup();
 													$this.trigger(name+'Start');
 												}
 												else{
@@ -439,10 +443,11 @@
 													url = getImageSrc(index);
 
 												$image.attr('src', url);
-												console.log($image);
 												$gallery.append($image);
 												//animation bind
-												$image.on('click mouseover', function(){
+												$image.on('touchstart mouseover', function(){
+													//Disable any active buttons
+													$(dot(zoe.cls.buttonArea) + ' ' + dot(zoe.cls.buttonActive)).mouseup();
 													$this.stop(true).animate({'zoetropeImage' : pos}, 500);
 												});
 											});
@@ -593,6 +598,10 @@
 								// down psudeo event, which fired by either mousedown or touchstart
 								down : function(e, x, y, ev){
 									var state = get('state');
+
+									// Ensure this wasn't a gallery click.
+									if(ev && $(ev.target).hasClass(zoe.cls.galleryImage)) return;
+
 									$this.stop(true);
 									if(state.idleTimeout) clearTimeout(state.idleTimeout);
 									//make sure buttons come in when we start doing stuff
@@ -635,25 +644,27 @@
 									var state = get('state');
 
 									// used to timer sync
-									if(!state.updated) return;
+									if(!state.updated){
+										ev && (ev.give = false);
+										return;
+									}
 									state.updated = false;
 
 									var lastPanCursor = state.lastPanCursor,
-										delta= { x: x - lastPanCursor.x, y: y - lastPanCursor.y },
-										abs_delta= { x: abs(delta.x), y: abs(delta.y) },
+										delta = { x: x - lastPanCursor.x, y: y - lastPanCursor.y },
+										abs_delta = { x: abs(delta.x), y: abs(delta.y) },
 										width = $this.width(),
 										height = $this.height();
 
-									//if we've moved more than one column
 									if (abs_delta.x > 0){
-										ev && (ev.give = false);
+										if(abs_delta.x > 5) // vetical tolerance
+											ev && (ev.give = false);
 										state.lastPanCursor.x = x;
 										//column change
-										var change = delta.x / (width/(360)),
-											// add 36 to prevent it ever going negative
+										var change = delta.x / (width/360),
+											// Add 360 to prevent it ever going negative.
 											newCol = (state.col + change + 360) % 360;
 										state.col = newCol;
-
 										// update for velocity calcs
 										state.delta_cursor.push(delta.x)
 										state.delta_cursor.shift()
@@ -664,7 +675,8 @@
 										var change = delta.y / (width/250),
 											newRow = min_max(0, 90, state.row + change);
 										//pass on the event if no change (helps with page scrolling)
-										if(newRow != state.row)
+										if((state.row != 0 && delta.y < 0)
+											|| (state.row != 90 && delta.y > 0))
 											ev && (ev.give = false);
 										state.row =  newRow;
 									}
@@ -742,12 +754,12 @@
 									if(typeof state == 'undefined') return;
 									if (e.originalEvent.wheelDelta >= 0) {
 										if(!state.zoomed && $this.find(dot(pre+'btn-zoom')).length){
-											$this.find(dot(pre+'btn-zoom')).click();
+											$this.find(dot(pre+'btn-zoom')).mouseup();
 											return false;
 										}
 									}
 									else if(state.zoomed){
-										$this.find(dot(pre+'btn-zoom')).click();
+										$this.find(dot(pre+'btn-zoom')).mouseup();
 										return false;
 									}
 								},
@@ -778,10 +790,10 @@
 											scaleDown = pinch2_size < (pinch1_size-20); //20's a threshold
 
 										if (scaleUp && !state.zoomed) {
-											$this.find(dot(pre+'btn-zoom')).click();
+											$this.find(dot(pre+'btn-zoom')).mouseup();
 										}
 										else if(state.zoomed && scaleDown){
-											$this.find(dot(pre+'btn-zoom')).click();
+											$this.find(dot(pre+'btn-zoom')).mouseup();
 										}
 									}
 								},
@@ -800,6 +812,8 @@
 										offset = $this.offset(),
 										size = $this.outerWidth();
 
+									$this.trigger('showButtons');
+
 									//add the image to zoom
 									$('<img>')
 										.attr('src', zoomUrl)
@@ -812,7 +826,8 @@
 									//events on the zoom area
 									$zoomDiv.on(evns(['mouseleave'],'zoom'), leave);
 									$zoomDiv.on(evns(['mouseenter'],'zoom'), enter);
-									$zoomDiv.on(evns(['mousemove', 'touchmove'], 'zoom'), move);
+									$zoomDiv.on(evns(['mousemove'], 'zoom'), move);
+									$zoomDiv.on(evns(['touchmove'], 'zoom'), invertedMove);
 									//prevent touches effecting position
 									$zoomDiv.on(evns('mousedown', 'capture'), capture);
 
@@ -821,7 +836,8 @@
 
 									state.zoomed = true;
 
-									function move(e){ var offset = $this.offset(); $this.trigger('zoomMove', [pointer(e).pageX - offset.left, pointer(e).pageY - offset.top, e]); return false;}
+									function move(e){ var offset = $this.offset(); $this.trigger('zoomMove', [pointer(e).pageX - offset.left, pointer(e).pageY - offset.top, false, e]); return false;}
+									function invertedMove(e){ var offset = $this.offset(); $this.trigger('zoomMove', [pointer(e).pageX - offset.left, pointer(e).pageY - offset.top, true, e]); return false;}
 									function leave(){ $this.trigger('zoomLeave'); return false; }
 									function enter(){ $this.trigger('zoomEnter'); return false; }
 									function capture(){ return false;}
@@ -840,10 +856,10 @@
 								// Set the image margins etc
 								// There are some shortcuts because we know the image is square.
 								// Also synced with the page timer
-								zoomMove: function(e, x, y, syncBypass){
+								zoomMove: function(e, x, y, invert){
 									// syncing
 									var state = get('state');
-									if(!state.zoomUpdated && !syncBypass) return;
+									if(!state.zoomUpdated) return;
 									state.zoomUpdated = false;
 									// offset calcs
 									var $zoomDiv = $this.find(dot(zoe.cls.zoom)),
@@ -853,8 +869,16 @@
 										offset = $zoomDiv.offset(),
 										ratio = (sourceSize - size) / size;
 
-									$img.css('left', (x * -ratio) + 'px');
-									$img.css('top', (y * -ratio) + 'px');
+									if(invert){
+										var xoff = (x - size) * ratio;
+										var yoff = (y - size) * ratio;
+									}
+									else{
+										var xoff = (x * -ratio);
+										var yoff = (y * -ratio);
+									}
+									$img.css('left', min_max(-sourceSize+size, 0, xoff) + 'px');
+									$img.css('top', min_max(-sourceSize+size, 0, yoff) + 'px');
 								},
 
 								zoomEnter: function(){
@@ -970,7 +994,7 @@
 									}
 
 									var	blittedFrameIndex = state.blittedFrameIndex,
-										displayIndex = floor(state.col / (360/state.colCount)) + floor(state.row / (90/state.rowCount))*state.colCount;
+										displayIndex = floor(state.col / (360/state.colCount)) + min_max(0, 2, floor(state.row / (90/state.rowCount)))*state.colCount;
 
 									// `pan` syncing
 									state.updated = true;
@@ -988,22 +1012,32 @@
 										if($newFrame == null || $oldFrame == null) return;
 										$newFrame.addClass(zoe.cls.newFrame);
 
-										//animation setup
-										$newFrame.hide();
-										$oldFrame.stop(true, true);
-										$this.prepend($newFrame);
-										state.blittedFrameIndex = displayIndex;
+										// Sometimes we might not animate to increase performance.
+										if(state.animate){
+											// Animation setup.
+											$newFrame.hide();
+											$oldFrame.stop(true, true);
+											$this.prepend($newFrame);
+											state.blittedFrameIndex = displayIndex;
 
-										$newFrame.fadeIn({
-											duration: 39,
-											easing : 'linear',
-											queue: false,
-											complete: function(){
-												$oldFrame.detach();
-												$newFrame.removeClass(zoe.cls.newFrame);
-												$this.trigger('framechange',[state.blittedFrameIndex]);
-											}
-										});
+											$newFrame.fadeIn({
+												duration: 39,
+												easing : 'linear',
+												queue: false,
+												complete: function(){
+													$oldFrame.detach();
+													$newFrame.removeClass(zoe.cls.newFrame);
+													$this.trigger('framechange',[state.blittedFrameIndex]);
+												}
+											});
+										}
+										else{
+											// No animation version.
+											$this.prepend($newFrame);
+											state.blittedFrameIndex = displayIndex;
+											$oldFrame.detach();
+											$newFrame.removeClass(zoe.cls.newFrame);
+										}
 
 
 									}

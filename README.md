@@ -22,8 +22,9 @@ gulp
 
 1. Clone the Repo
 2. Make sure [nodejs](http://nodejs.org/download/) is installed.
-3. Install depedencies (from project directory). This will install gulp globally
-4. Build
+3. Make sure librsvg-dev is installed (ubuntu: `sudo apt-get install librsvg2-dev`)
+4. Install depedencies (from project directory). This will install gulp globally
+5. Build
 
 ## Developer docs
 Full API documentation with basic implementation examples is available here: [Zoetrope Viewer Documentation](http://zoetropeimaging.github.io/zoetrope-jquery/docs/developer_docs.html)

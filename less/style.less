@@ -90,6 +90,8 @@
 
 /* trigger link */
 .@{pre}engage-trigger, .@{pre}engage-trigger:focus{
+	max-width: 100%;
+	width: 500px;
 	display: inline-block;
 	border: none;
 	outline: none;
@@ -114,7 +116,7 @@
 	z-index: @z-trigger;
 
 	> span{
-		background-image: url(../img/cta.png);
+		background-image: url(img/rotate.png);
 		.background-shape(auto, 100%);
 		background-position: left center;
 		background-repeat: no-repeat;
@@ -125,9 +127,10 @@
 	}
 }
 
-//Especially for IE
-a.@{pre}engage-trigger img {
-	border: 0;
+div.@{pre}engage-trigger img {
+	width: 100%;
+	height: auto;
+	border: 0; //Especially for IE
 }
 
 .@{pre}engage-wrapper{
@@ -140,7 +143,9 @@ a.@{pre}engage-trigger img {
 
 	width: 100%;
 	max-width: 100%;
+	min-width:250px;
 	height: 100%;
+	box-sizing: content-box;
 	position: relative;
 	z-index: @z-wrapper; //new context
 	.no-select;
@@ -164,6 +169,7 @@ a.@{pre}engage-trigger img {
 	}
 	div.@{pre}frame-cover{
 		z-index: @z-frame-cover;
+		height: 100%
 	}
 
 	/* Buttons */
@@ -189,16 +195,16 @@ a.@{pre}engage-trigger img {
 	}
 
 	.@{pre}btn-zoom{
-		background-image: url(../img/in.png);
+		background-image: url(img/zoom.png);
 	}
 	.@{pre}btn-zoom.@{pre}btn-active{
-		background-image: url(../img/out.png);
+		background-image: url(img/zoom.active.png);
 	}
 	.@{pre}btn-help{
-		background-image: url(../img/help.png);
+		background-image: url(img/help.png);
 	}
 	.@{pre}btn-close{
-		background-image: url(../img/close.png);
+		background-image: url(img/close.png);
 	}
 
 	/* Zoom */
@@ -228,15 +234,18 @@ a.@{pre}engage-trigger img {
 	}
 
 	.@{pre}help-wrapper{
-		background-color: transparent;
+		.rgba-background(#1d1d1b, 0.8);
 		position: absolute;
 		top:35px;
 		right: 55px;
 		width:80%;
-		height:80%;
+		height:75%;
 		.border-radius;
 		overflow: hidden;
 		z-index: 4;
+
+		padding-top:10%;
+		box-sizing:padding-box;
 	}
 
 	.@{pre}help-triangle{
@@ -256,29 +265,15 @@ a.@{pre}engage-trigger img {
 		width:50%;
 		height: 50%;
 		float: left;
+
 	}
 
-	.@{pre}help-spacer{
-		height: 100%;
-		width: 25%;
-		float: left;
-	}
-
-	.@{pre}help-section{
-		width: 50%;
-		float: left;
-		height: 100%;
-	}
-
-	.@{pre}help-pad{
-		width: 100%;
-		height: 10%;
-	}
 
 	.@{pre}help-image{
 		height: 50%;
-		width: 100%;
+		width: 50%;
 		display: block;
+		margin: 0 auto;
 		.hide-text();
 		.background-square(100%);
 	}
@@ -290,22 +285,18 @@ a.@{pre}engage-trigger img {
 		line-height: 30px;
 	}
 
-	.@{pre}help-spacer, .@{pre}help-section .@{pre}help-text, .@{pre}help-pad{
-		//normal background tiles
-		.rgba-background(#1d1d1b, 0.8);
-	}
 
 	.@{pre}help-rotate .@{pre}help-image{
-		background-image: url(../img/rotate.png);
+		background-image: url(img/rotate.png);
 	}
 	.@{pre}help-elevate .@{pre}help-image{
-		background-image: url(../img/elevate.png);
+		background-image: url(img/elevate.png);
 	}
 	.@{pre}help-zoom .@{pre}help-image{
-		background-image: url(../img/zoom.png);
+		background-image: url(img/zoom.png);
 	}
 	.@{pre}help-brand .@{pre}help-image{
-		background-image: url(../img/zoetrope.png);
+		background-image: url(img/zoetrope.png);
 	}
 	.@{pre}help-brand a{
 		font-size: 14px;
@@ -390,6 +381,10 @@ a.@{pre}engage-trigger img {
 	.@{pre}help-wrapper{
 		height: 64%;
 	}
+
+	.@{pre}zoom, div.@{pre}frame-cover{
+		height: 80%;
+	}
 }
 
 //overlay
@@ -409,7 +404,7 @@ a.@{pre}engage-trigger img {
 	max-width: 100%;
 	//height is set by the zoetrope image
 	background-color: #1d1d1b;
-	margin: 100px auto;
+	margin: 5% auto;
 	.border-radius;
 	overflow: hidden;
 }
