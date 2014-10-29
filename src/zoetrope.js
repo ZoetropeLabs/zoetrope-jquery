@@ -437,6 +437,8 @@
 												$gallery.append($image);
 												//animation bind
 												$image.on('touchstart mouseover', function(){
+													//Disable any active buttons
+													$(dot(zoe.cls.buttonArea) + ' ' + dot(zoe.cls.buttonActive)).mouseup();
 													$this.stop(true).animate({'zoetropeImage' : pos}, 500);
 												});
 											});
@@ -861,14 +863,13 @@
 									if(invert){
 										var xoff = (x - size) * ratio;
 										var yoff = (y - size) * ratio;
-										console.log(xoff, yoff);
-										$img.css('left', xoff + 'px');
-										$img.css('top', yoff + 'px');
 									}
 									else{
-										$img.css('left', (x * -ratio) + 'px');
-										$img.css('top', (y * -ratio) + 'px');
+										var xoff = (x * -ratio);
+										var yoff = (y * -ratio);
 									}
+									$img.css('left', min_max(0, sourceSize, xoff) + 'px');
+									$img.css('top', min_max(0, sourceSize, yoff) + 'px');
 								},
 
 								zoomEnter: function(){
