@@ -148,7 +148,7 @@
 			'buttons' : {init: true}, // Show buttons - if you disable no zoom or help will be shown. mainly for auto-animate sitations.
 			'gallery' : {init: false}, //show gallery
 			'galleryImages' : {init : [], type: 'array'},
-			'cdn' : {type: 'string', init: window.location.protocol== 'https://' ? 'https://' + '{{image-cdn:url}}' : 'http://' + '{{image-cdn:url}}'},
+			'cdn' : {type: 'string', init: '{{image-cdn:url}}'},
 			'break' : {type: 'number', init: 2500},
 			'lang': {type: 'string', init: (window.navigator.userLanguage || window.navigator.language)},
 			'size' : {type: 'enum', init: 0, options:[0,250,500,1000]}
@@ -249,6 +249,15 @@
 								// Make settings from data-* and defaults.
 								parseSettings($this, zoe.defaultSettings);
 								setLangage($this);
+
+								var state = get('state');
+								//set the protocol on the CDN if it doesn't contain
+								//a protocol already.
+								if(state.cdn.indexOf('://') == -1){
+									var prepend = (window.location.protocol == 'https://' ? 'https:' : 'http:');
+									if(state.cdn.indexOf('//') != 0) prepend += '//';
+									state.cdn = prepend + state.cdn;
+								}
 
 								//add markup and move this up to it.
 								var data = $this.data();

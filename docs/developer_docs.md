@@ -16,7 +16,7 @@ Assuming that the Zoetrope JS and CSS has been included (for this example they'r
     />
 ```
 with the following script in the `<head>` of the page:
-```html	
+```html
 	<script src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
 	<script src="//d34tuy4jppw3dn.cloudfront.net/v3/js/zoetrope.jquery.min.js"></script>
 	<link type="text/css" rel="stylesheet" href="//d34tuy4jppw3dn.cloudfront.net/v3/css/zoetrope.jquery.min.css" media="all">
@@ -73,7 +73,7 @@ The ZEV will look for all elements on the page which have the class `zoe-engage-
 ### Inline (default)
 By setting the inline attribute, the ZEV will replace the starting image with the interactive version in its place. This is well suited for use in product pages and places where there is only one image inline.
 
-### Popover 
+### Popover
 If you'd prefer not to display the ZEV inline, it can also be shown in a popover. This has the advantage that it allows greater cross device compatibility for sites which are not fully responsive. If you are using multiple ZEVs on a page, we recommend using the popover option to decrease resource usgae.
 
 Example:
@@ -125,6 +125,9 @@ When this attribute is set, the ZEV will start to rotate as soon as it has loade
 
 #### Animate When Idle `idle-animate`
 If `idle-animate` is set, the ZEV will rotate whenever the user is not interacting with it. After an interaction there is a timeout before the viewer begins the animation again. Currently this rotates on the same level as the image specified in `start-position`, until the user changes the level.
+
+#### CDN override `cdn`
+Pass in a relative url of the form `//[domain]/[base path]` to set to custom non zoetrope CDN.
 
 ## Events
 There are certain events which can be hooked in to which will allow listening for changes to the viewer
