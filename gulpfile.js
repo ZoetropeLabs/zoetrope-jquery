@@ -400,6 +400,7 @@ gulp.task('watch', ['default'], function () {
 	}
 	gulp.watch(gfi, ['javascript']);
 	gulp.watch('less/*', ['less']);
+	gulp.watch(paths.svgs, ['convert-images'])
 });
 
 gulp.task('build-keen', function() {
@@ -422,7 +423,7 @@ gulp.task('convert-images', function(cb) {
 // Get some language strings etc
 gulp.task('fetch', ['detect-mobile','lang-strings', 'build-keen']);
 
-gulp.task('build-all', ['less', 'javascript', 'html']);
+gulp.task('build-all', ['less', 'javascript', 'html', 'convert-images']);
 
 
 // The default task (called when you run `gulp` from cli)

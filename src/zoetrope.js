@@ -434,7 +434,6 @@
 													url = getImageSrc(index);
 
 												$image.attr('src', url);
-												console.log($image);
 												$gallery.append($image);
 												//animation bind
 												$image.on('click mouseover', function(){
@@ -630,25 +629,27 @@
 									var state = get('state');
 
 									// used to timer sync
-									if(!state.updated) return;
+									if(!state.updated){
+										ev && (ev.give = false);
+										return;
+									}
 									state.updated = false;
 
 									var lastPanCursor = state.lastPanCursor,
-										delta= { x: x - lastPanCursor.x, y: y - lastPanCursor.y },
-										abs_delta= { x: abs(delta.x), y: abs(delta.y) },
+										delta = { x: x - lastPanCursor.x, y: y - lastPanCursor.y },
+										abs_delta = { x: abs(delta.x), y: abs(delta.y) },
 										width = $this.width(),
 										height = $this.height();
 
-									//if we've moved more than one column
 									if (abs_delta.x > 0){
-										ev && (ev.give = false);
+										if(abs_delta.x > 5) // vetical tolerance
+											ev && (ev.give = false);
 										state.lastPanCursor.x = x;
 										//column change
-										var change = delta.x / (width/(360)),
-											// add 36 to prevent it ever going negative
+										var change = delta.x / (width/360),
+											// Add 360 to prevent it ever going negative.
 											newCol = (state.col + change + 360) % 360;
 										state.col = newCol;
-
 										// update for velocity calcs
 										state.delta_cursor.push(delta.x)
 										state.delta_cursor.shift()
@@ -659,7 +660,8 @@
 										var change = delta.y / (width/250),
 											newRow = min_max(0, 90, state.row + change);
 										//pass on the event if no change (helps with page scrolling)
-										if(newRow != state.row)
+										if((state.row != 0 && delta.y < 0)
+											|| (state.row != 90 && delta.y > 0))
 											ev && (ev.give = false);
 										state.row =  newRow;
 									}
@@ -794,6 +796,8 @@
 										zoomUrl = getZoomSrc(state.blittedFrameIndex),
 										offset = $this.offset(),
 										size = $this.outerWidth();
+
+									$this.trigger('showButtons');
 
 									//add the image to zoom
 									$('<img>')
@@ -965,7 +969,7 @@
 									}
 
 									var	blittedFrameIndex = state.blittedFrameIndex,
-										displayIndex = floor(state.col / (360/state.colCount)) + floor(state.row / (90/state.rowCount))*state.colCount;
+										displayIndex = floor(state.col / (360/state.colCount)) + min_max(0, 2, floor(state.row / (90/state.rowCount)))*state.colCount;
 
 									// `pan` syncing
 									state.updated = true;
