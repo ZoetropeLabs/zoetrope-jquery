@@ -868,8 +868,8 @@
 										var xoff = (x * -ratio);
 										var yoff = (y * -ratio);
 									}
-									$img.css('left', min_max(0, sourceSize, xoff) + 'px');
-									$img.css('top', min_max(0, sourceSize, yoff) + 'px');
+									$img.css('left', min_max(-sourceSize+size, 0, xoff) + 'px');
+									$img.css('top', min_max(-sourceSize+size, 0, yoff) + 'px');
 								},
 
 								zoomEnter: function(){
