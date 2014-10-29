@@ -102,21 +102,14 @@
 					<div class="<%=zoe.cls.helpWrapper%>"> \
 						<% for(var i=0; i < obj.sections.length; i++){ %> \
 							<div class="<%=zoe.cls.helpTile%> <%=obj.sections[i][\'class\']%>"> \
-								<div class="<%=zoe.cls.helpSpacer%>"> </div> \
-								<div class="<%=zoe.cls.helpSection%>"> \
-									<div class="<%=zoe.cls.helpColumnPad%>"> </div> \
-									<% if(typeof obj.sections[i].image !== "undefined") { %> \
-										<%=obj.sections[i].image %>\
-									<% } else { %>\
-										<div class="<%=zoe.cls.helpImage%>"> </div> \
-									<% } %>\
-									<div class="<%=zoe.cls.helpText%>"><%=obj.sections[i].text%></div> \
+								<% if(typeof obj.sections[i].image !== "undefined") { %> \
+									<%=obj.sections[i].image %>\
+								<% } else { %>\
+									<div class="<%=zoe.cls.helpImage%>"> </div> \
+								<% } %>\
+								<div class="<%=zoe.cls.helpText%>"><%=obj.sections[i].text%></div> \
 								</div> \
-								<div class="<%=zoe.cls.helpSpacer%>"> </div> \
-							</div> \
-						<% } %> \
-					 </div> \
-					</div>',
+						<% } %>',
 			zoom: '<div class="<%=zoe.cls.zoom%>"></div>',
 			progress: '<div class="<%=zoe.cls.progressWrapper%>"> \
 				<div class="zoe-progress-z zoe-background">&nbsp;</div> \
