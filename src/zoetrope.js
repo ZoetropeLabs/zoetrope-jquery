@@ -119,7 +119,7 @@
 			trigger : '<div class="<%=zoe.cls.trigger%>">\
 							<div class="<%=zoe.cls.triggerCta%>"><span>&nbsp;</span><%=zoe.strs.inlineCallToAction[$.browser.mobile ? "mobile" : "desktop"]%></div>\
 						</div>',
-			zboxOverlay : '<div id="<%=zoe.id.zboxOverlay%>">&nbsp;</div>',
+			zboxOverlay : '<div id="<%=zoe.id.zboxOverlay%>"></div>',
 			zboxContent : '<div class="<%=zoe.cls.zboxOuter%>"><div id="<%=zoe.id.zboxContent%>"></div></div>',
 			galleryContainer : '<div class="<%=zoe.cls.galleryContainer%>"></div>',
 			galleryImage : '<img class="<%=zoe.cls.galleryImage%>" />'
@@ -526,7 +526,7 @@
 											if( ret_index === -1){
 												ret_index = $.inArray(null, arrSlice);
 											}
-											if( ret_index !== -1){
+										if( ret_index !== -1){
 												ret_index = ret_index + rowChoice*state.colCount;
 												return ret_index;
 											}
@@ -956,6 +956,9 @@
 									//attach events if required
 									if(!$._data($this[0], 'events'))
 											$this.on(on.instance);
+
+									if ($zboxContent.height >= $(window).height)
+										$(dot(zoe.cls.zboxOuter)).css('margin','0 auto');
 
 
 									$this.trigger('setup');
