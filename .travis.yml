@@ -12,7 +12,10 @@ install:
     - cd ..
     - git clone https://github.com/ZoetropeImaging/regression-tests.git
     - cd regression-tests
-    - git clone https://github.com/ZoetropeImaging/zoetrope-jquery.git
+    - git clone --depth=50 --branch=$TRAVIS_BRANCH git://github.com/ZoetropeImaging/zoetrope-jquery.git
+    - cd zoetrope-jquery
+    - git checkout -qf $TRAVIS_COMMIT
+    - cd ..
 
 before_script:
     - npm install

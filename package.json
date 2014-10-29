@@ -36,6 +36,7 @@
     "jasmine-node": "^1.14.3",
     "karma-jasmine": "^0.1.5",
     "karma-sauce-launcher": "^0.2.8",
+    "lodash": "^2.4.1",
     "protractor": "^0.22.0",
     "q": "~1.0.1",
     "run-sequence": "^1.0.1",

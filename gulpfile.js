@@ -37,8 +37,9 @@ var port = '8888';
 // Branch info - Jenkins does some funky detached HEAD stuff, but is kind enough to give
 // us an environment variable, however, this is not set in a normal environment
 var jenkins_branch = (process.env.GIT_BRANCH || '').replace('origin/', '');
+var travis_branch = (process.env.TRAVIS_BRANCH || '');
 var res = sh.exec('git rev-parse --abbrev-ref HEAD').stdout.trim();
-var gitBranch = (jenkins_branch || res);
+var gitBranch = (travis_branch || jenkins_branch || res);
 console.log("current branch: ", gitBranch);
 
 var git_sha = sh.exec("git rev-parse HEAD").stdout.trim();
