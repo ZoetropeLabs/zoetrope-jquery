@@ -90,6 +90,8 @@
 
 /* trigger link */
 .@{pre}engage-trigger, .@{pre}engage-trigger:focus{
+	max-width: 100%;
+	width: 500px;
 	display: inline-block;
 	border: none;
 	outline: none;
@@ -125,9 +127,10 @@
 	}
 }
 
-//Especially for IE
-a.@{pre}engage-trigger img {
-	border: 0;
+div.@{pre}engage-trigger img {
+	width: 100%;
+	height: auto;
+	border: 0; //Especially for IE
 }
 
 .@{pre}engage-wrapper{
@@ -401,7 +404,7 @@ a.@{pre}engage-trigger img {
 	max-width: 100%;
 	//height is set by the zoetrope image
 	background-color: #1d1d1b;
-	margin: 100px auto;
+	margin: 5% auto;
 	.border-radius;
 	overflow: hidden;
 }

@@ -289,7 +289,7 @@
 									$this = $wrapper;
 									// Attach tiggers
 									on.zbox.attach();
-									$trigger.on(evns('click', 'zbox'), on.zbox.open);
+									$trigger.on(evns(['mouseup', 'touchstart'], 'zbox'), on.zbox.open);
 
 									//save this as the inital state
 									$original = $this.clone(true);
