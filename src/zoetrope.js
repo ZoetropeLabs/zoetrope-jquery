@@ -385,13 +385,13 @@
 												$btn = tmpl(zoe.html.button, contents);
 
 											$btn.data(oddClickName, true);
-											$btn.click(function(){
+											$btn.on('mouseup touchstart',function(){
 												//callbacks that add the event triggering on $this
 												$this.stop(); //cancel animations
 												if($btn.data(oddClickName)){
 													$(this).addClass(zoe.cls.buttonActive);
 													//deactivate other buttons
-													$btn.siblings(dot(zoe.cls.buttonActive)).click();
+													$btn.siblings(dot(zoe.cls.buttonActive)).mouseup();
 													$this.trigger(name+'Start');
 												}
 												else{
@@ -443,7 +443,7 @@
 												$image.attr('src', url);
 												$gallery.append($image);
 												//animation bind
-												$image.on('click mouseover', function(){
+												$image.on('touchstart mouseover', function(){
 													$this.stop(true).animate({'zoetropeImage' : pos}, 500);
 												});
 											});
@@ -594,6 +594,10 @@
 								// down psudeo event, which fired by either mousedown or touchstart
 								down : function(e, x, y, ev){
 									var state = get('state');
+
+									// Ensure this wasn't a gallery click.
+									if(ev && $(ev.target).hasClass(zoe.cls.galleryImage)) return;
+
 									$this.stop(true);
 									if(state.idleTimeout) clearTimeout(state.idleTimeout);
 									//make sure buttons come in when we start doing stuff
@@ -746,12 +750,12 @@
 									if(typeof state == 'undefined') return;
 									if (e.originalEvent.wheelDelta >= 0) {
 										if(!state.zoomed && $this.find(dot(pre+'btn-zoom')).length){
-											$this.find(dot(pre+'btn-zoom')).click();
+											$this.find(dot(pre+'btn-zoom')).mouseup();
 											return false;
 										}
 									}
 									else if(state.zoomed){
-										$this.find(dot(pre+'btn-zoom')).click();
+										$this.find(dot(pre+'btn-zoom')).mouseup();
 										return false;
 									}
 								},
@@ -782,10 +786,10 @@
 											scaleDown = pinch2_size < (pinch1_size-20); //20's a threshold
 
 										if (scaleUp && !state.zoomed) {
-											$this.find(dot(pre+'btn-zoom')).click();
+											$this.find(dot(pre+'btn-zoom')).mouseup();
 										}
 										else if(state.zoomed && scaleDown){
-											$this.find(dot(pre+'btn-zoom')).click();
+											$this.find(dot(pre+'btn-zoom')).mouseup();
 										}
 									}
 								},
@@ -818,7 +822,8 @@
 									//events on the zoom area
 									$zoomDiv.on(evns(['mouseleave'],'zoom'), leave);
 									$zoomDiv.on(evns(['mouseenter'],'zoom'), enter);
-									$zoomDiv.on(evns(['mousemove', 'touchmove'], 'zoom'), move);
+									$zoomDiv.on(evns(['mousemove'], 'zoom'), move);
+									$zoomDiv.on(evns(['touchmove'], 'zoom'), invertedMove);
 									//prevent touches effecting position
 									$zoomDiv.on(evns('mousedown', 'capture'), capture);
 
@@ -827,7 +832,8 @@
 
 									state.zoomed = true;
 
-									function move(e){ var offset = $this.offset(); $this.trigger('zoomMove', [pointer(e).pageX - offset.left, pointer(e).pageY - offset.top, e]); return false;}
+									function move(e){ var offset = $this.offset(); $this.trigger('zoomMove', [pointer(e).pageX - offset.left, pointer(e).pageY - offset.top, false, e]); return false;}
+									function invertedMove(e){ var offset = $this.offset(); $this.trigger('zoomMove', [pointer(e).pageX - offset.left, pointer(e).pageY - offset.top, true, e]); return false;}
 									function leave(){ $this.trigger('zoomLeave'); return false; }
 									function enter(){ $this.trigger('zoomEnter'); return false; }
 									function capture(){ return false;}
@@ -846,10 +852,10 @@
 								// Set the image margins etc
 								// There are some shortcuts because we know the image is square.
 								// Also synced with the page timer
-								zoomMove: function(e, x, y, syncBypass){
+								zoomMove: function(e, x, y, invert){
 									// syncing
 									var state = get('state');
-									if(!state.zoomUpdated && !syncBypass) return;
+									if(!state.zoomUpdated) return;
 									state.zoomUpdated = false;
 									// offset calcs
 									var $zoomDiv = $this.find(dot(zoe.cls.zoom)),
@@ -859,8 +865,17 @@
 										offset = $zoomDiv.offset(),
 										ratio = (sourceSize - size) / size;
 
-									$img.css('left', (x * -ratio) + 'px');
-									$img.css('top', (y * -ratio) + 'px');
+									if(invert){
+										var xoff = (x - size) * ratio;
+										var yoff = (y - size) * ratio;
+										console.log(xoff, yoff);
+										$img.css('left', xoff + 'px');
+										$img.css('top', yoff + 'px');
+									}
+									else{
+										$img.css('left', (x * -ratio) + 'px');
+										$img.css('top', (y * -ratio) + 'px');
+									}
 								},
 
 								zoomEnter: function(){
