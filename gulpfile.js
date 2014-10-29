@@ -70,9 +70,9 @@ var paths = {
 var module_name = "zoetrope.jquery";
 
 var cdns = {
-	'v3-dev': '//d34tuy4jppw3dn.cloudfront.net',
-	'master': '//d34tuy4jppw3dn.cloudfront.net',
-	v1: '//d34tuy4jppw3dn.cloudfront.net'
+	'v3-dev': 'd34tuy4jppw3dn.cloudfront.net',
+	'master': 'd34tuy4jppw3dn.cloudfront.net',
+	v1: 'd34tuy4jppw3dn.cloudfront.net'
 };
 
 var keenKeys = {
