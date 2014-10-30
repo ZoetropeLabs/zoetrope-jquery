@@ -957,7 +957,7 @@
 									if(!$._data($this[0], 'events'))
 											$this.on(on.instance);
 
-									if ($zboxContent.height >= $(window).height)
+									if ($zboxContent.height() >= $(window).height())
 										$(dot(zoe.cls.zboxOuter)).css('margin','0 auto');
 
 
