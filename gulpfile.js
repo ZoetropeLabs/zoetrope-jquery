@@ -50,6 +50,7 @@ var paths = {
 		'lib/UUID/Math.uuid.js',
 		'lib/keen/dist/keen-tracker.js',
 		'lib/detectmobilebrowser.js',
+        'lib/jquery-debounce/jquery.debounce.js',
 		'src/zoetrope.js',
 	],
 	gfi : {
