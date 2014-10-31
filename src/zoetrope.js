@@ -389,7 +389,7 @@
 												$btn = tmpl(zoe.html.button, contents);
 
 											$btn.data(oddClickName, true);
-											$btn.on('mouseup touchstart',$.debounce(250,true,function(){
+											$btn.on('mouseup touchstart',function(){
 												//callbacks that add the event triggering on $this
 												$this.stop(); //cancel animations
 												if($btn.data(oddClickName)){
@@ -404,7 +404,7 @@
 												}
 												$btn.data(oddClickName, !$btn.data(oddClickName));
 												return false;
-											}));
+											});
 											$buttonArea.hide()
 											$buttonArea.find(dot(zoe.cls.buttonArea)).append($btn);
 											// jQuery adds 'style="display:inline;' for some reason, but we really don't want that

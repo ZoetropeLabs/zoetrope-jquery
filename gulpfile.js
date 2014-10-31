@@ -50,7 +50,6 @@ var paths = {
 		'lib/UUID/Math.uuid.js',
 		'lib/keen/dist/keen-tracker.js',
 		'lib/detectmobilebrowser.js',
-        'lib/jquery-debounce/jquery.debounce.js',
 		'src/zoetrope.js',
 	],
 	gfi : {
@@ -417,7 +416,6 @@ gulp.task('convert-images', function(cb) {
 	return gulp.src(paths.svgs)
 		.pipe(svg2png())
 		.pipe(imagemin({
-			progressive:true,
 			use:[pngcrush()]
 		}))
 		.pipe(gulp.dest(paths.dist + '/img'));
