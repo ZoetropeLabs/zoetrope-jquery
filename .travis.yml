@@ -41,8 +41,8 @@ after_success:
     - if [[$TRAVIS_BRANCH == 'v3']]; then ../travis_deploy_zoetrope.sh; fi
 
 after_failure:
-    - ssh ssh -i ~/.ssh/id_ci_github -o "StrictHostKeyChecking no" $TEST_IMAGES_SERVER -p2223 'mkdir' $TRAVIS_COMMIT
-    - scp -i ~/.ssh/id_ci_github -rp /tmp/screen $TEST_IMAGES_SERVER:~/$TRAVIS_COMMIT -P 2223
+    - ssh -i ~/.ssh/id_ci_github -o "StrictHostKeyChecking no" $TEST_IMAGES_SERVER -p2223 'mkdir' $TRAVIS_COMMIT
+    - scp -i ~/.ssh/id_ci_github -P2223 -rp /tmp/screen $TEST_IMAGES_SERVER:~/$TRAVIS_COMMIT 
 
 notifications:
     slack:
