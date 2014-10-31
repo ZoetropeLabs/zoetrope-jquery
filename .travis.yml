@@ -42,7 +42,7 @@ after_success:
 
 after_failure:
     - ssh ssh -i ~/.ssh/id_ci_github -o "StrictHostKeyChecking no" $TEST_IMAGES_SERVER -p2223 'mkdir' $TRAVIS_COMMIT
-    - scp -i ~/.ssh/id_ci_github -rp images $TEST_IMAGES_SERVER:~/$TRAVIS_COMMIT -P 2223
+    - scp -i ~/.ssh/id_ci_github -rp /tmp/screen $TEST_IMAGES_SERVER:~/$TRAVIS_COMMIT -P 2223
 
 notifications:
     slack:
