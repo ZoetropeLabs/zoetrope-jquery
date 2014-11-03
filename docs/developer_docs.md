@@ -152,7 +152,7 @@ Whenever the frame changes, this event will be fired
 	if(!doc.getElementById(id)){
 		js=doc.createElement(tag);
 		js.id='jq';
-		js.src="http://code.jquery.com/jquery-1.11.0.min.js"
+		js.src=p+"//code.jquery.com/jquery-1.11.0.min.js"
 		js.type="text/javascript";
 		jsz = doc.createElement(tag);
 		jsz.id=id;
