@@ -769,7 +769,10 @@
 								'touchstart.zoom': function(e){
 									var state = get('state');
 									if(typeof state == 'undefined') return;
-									state.touchstart = e.originalEvent.touches;
+									if(e.originalEvent.touches.length == 2){
+										state.touchstart = e.originalEvent.touches;
+										e.preventDefault();
+									}
 								},
 
 								'touchend.zoom' : function(e){
@@ -782,21 +785,32 @@
 									var state = get('state');
 									if(typeof state == 'undefined') return;
 									if(state.touchstart && e.originalEvent.touches.length == 2){
-										var pinch1_f1 = state.touchstart[0],
-											pinch1_f2 = state.touchstart[1],
-											pinch2_f1 = e.originalEvent.touches[0],
-											pinch2_f2 = e.originalEvent.touches[1],
-											pinch1_size = sqrt(sq(pinch1_f1.clientX - pinch1_f2.clientX) + sq(pinch1_f1.clientY - pinch1_f2.clientY)),
-											pinch2_size = sqrt(sq(pinch2_f1.clientX - pinch2_f2.clientX) + sq(pinch2_f1.clientY - pinch2_f2.clientY)),
-											scaleUp = pinch2_size > (pinch1_size+20),
-											scaleDown = pinch2_size < (pinch1_size-20); //20's a threshold
 
-										if (scaleUp && !state.zoomed) {
+										var scale = 1;
+										// use scale on event object if provided.
+										if(typeof e.originalEvent.scale !== 'undefined'){
+											scale = e.originalEvent.scale;
+										}
+										else{
+											var pinch1_f1 = state.touchstart[0],
+												pinch1_f2 = state.touchstart[1],
+												pinch2_f1 = e.originalEvent.targetTouches[0],
+												pinch2_f2 = e.originalEvent.targetTouches[1],
+												pinch1_size = sqrt(sq(pinch1_f1.clientX - pinch1_f2.clientX) + sq(pinch1_f1.clientY - pinch1_f2.clientY)),
+												pinch2_size = sqrt(sq(pinch2_f1.clientX - pinch2_f2.clientX) + sq(pinch2_f1.clientY - pinch2_f2.clientY)),
+												scaleUp = pinch2_size > (pinch1_size+20),
+												scaleDown = pinch2_size < (pinch1_size-20); //20's a threshold
+
+												scale = (scaleUp * 2) || (scaleDown * -0.5) || (!scaleUp && !scaleDown);
+										}
+
+										if (scale > 1 && !state.zoomed) {
 											$this.find(dot(pre+'btn-zoom')).mouseup();
 										}
-										else if(state.zoomed && scaleDown){
+										else if(state.zoomed && scale < 1){
 											$this.find(dot(pre+'btn-zoom')).mouseup();
 										}
+										e.preventDefault();
 									}
 								},
 
@@ -807,7 +821,7 @@
 									$this.append($zoomDiv);
 								},
 
-								zoomStart: function(){
+								zoomStart: function(e){
 									var state = get('state'),
 										$zoomDiv = $this.find(dot(zoe.cls.zoom)),
 										zoomUrl = getZoomSrc(state.blittedFrameIndex),
