@@ -1,6 +1,10 @@
 {
   "name": "jquery-zoetrope",
-  "version": "3.0.0",
+  "version": "3.0.1",
+  "repository": { 
+    "type": "git",
+    "url": "http://github.com/ZoetropeImaging/zoetrope-jquery.git"
+  },
   "devDependencies": {
     "async": "^0.6.2",
     "easyimage": "^0.1.6",
@@ -37,6 +41,7 @@
     "karma-jasmine": "^0.1.5",
     "karma-sauce-launcher": "^0.2.8",
     "lodash": "^2.4.1",
+    "open": "0.0.5",
     "protractor": "^0.22.0",
     "q": "~1.0.1",
     "rsvg": "^0.2.5",
