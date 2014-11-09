@@ -328,7 +328,7 @@
 									//a protocol already.
 									var cdn = get('cdn')
 									if(cdn.indexOf('://') == -1){
-										var prepend = (window.location.protocol == 'https://' ? 'https:' : 'http:');
+										var prepend = (window.location.protocol == 'https:' ? 'https:' : 'http:');
 										if(cdn.indexOf('//') != 0) prepend += '//';
 										cdn = prepend + cdn;
 									}
