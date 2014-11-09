@@ -159,7 +159,7 @@
 		initState : {
 			interactive: false, // True when the user is interacting
 			velocity: 0,
-			delta_cursor: [0,0], //used to store the last two deltas which are used for velocity calulation on `up`.
+			deltaCursor: [0,0], //used to store the last two deltas which are used for velocity calulation on `up`.
 			lastPanCursor : {x :0, y:0},
 			row: 0, //degrees [0-360]
 			col: 0, //degrees [0-90]
@@ -612,7 +612,7 @@
 
 									state.interactive = true;
 									state.lastPanCursor = {x:x, y:y};
-									state.delta_cursor = [0, 0];
+									state.deltaCursor = [0, 0];
 									state.velocity = 0;
 									zoe.pool.on(evns(['mousemove','touchmove']), drag);
 									zoe.pool.one(evns('mouseup'), lift);
@@ -635,8 +635,8 @@
 									zoe.pool.off(evns());
 									state.interactive = false;
 
-									// `state.delta_cursor` holds the last 2 deltas
-									state.velocity = (state.delta_cursor[0] + state.delta_cursor[1]) / 0.2;
+									// `state.deltaCursor` holds the last 2 deltas
+									state.velocity = (state.deltaCursor[0] + state.deltaCursor[1]) / 0.2;
 
 									//the delay before idle is 800ms, at which point we
 									//trigger the idle event
@@ -669,8 +669,8 @@
 											newCol = (state.col + change + 360) % 360;
 										state.col = newCol;
 										// update for velocity calcs
-										state.delta_cursor.push(delta.x)
-										state.delta_cursor.shift()
+										state.deltaCursor.push(delta.x)
+										state.deltaCursor.shift()
 									}
 									if (abs_delta.y > 0){
 										state.lastPanCursor.y = y;
