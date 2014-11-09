@@ -851,16 +851,25 @@
 									//prevent touches effecting position
 									$zoomDiv.on(evns('mousedown', 'capture'), capture);
 
+									//get stating positions if using touch
+									$zoomDiv.on(evns('touchstart', 'zoom'), startLocation);
+
 									//move to the buttons zoom position
-									$this.trigger('zoomMove', [size/2, size/2, true]);
+									$this.trigger('zoomMove', [size/2, size/2, false]);
 
 									state.zoomed = true;
 
 									function move(e){ var offset = $this.offset(); $this.trigger('zoomMove', [pointer(e).pageX - offset.left, pointer(e).pageY - offset.top, false, e]); return false;}
-									function invertedMove(e){ var offset = $this.offset(); $this.trigger('zoomMove', [pointer(e).pageX - offset.left, pointer(e).pageY - offset.top, true, e]); return false;}
+									function invertedMove(e){ var offset = state.zoomTouchStartCords; $this.trigger('zoomMove', [pointer(e).pageX - offset.pageX, pointer(e).pageY - offset.pageY, true, e]); return false;}
 									function leave(){ $this.trigger('zoomLeave'); return false; }
 									function enter(){ $this.trigger('zoomEnter'); return false; }
 									function capture(){ return false;}
+									function startLocation(e){
+										state.zoomTouchStartCords = {
+											pageX: e.originalEvent.touches[0].pageX,
+											pageY: e.originalEvent.touches[0].pageY
+										};
+									}
 								},
 
 								zoomEnd: function(){
@@ -876,7 +885,7 @@
 								// Set the image margins etc
 								// There are some shortcuts because we know the image is square.
 								// Also synced with the page timer
-								zoomMove: function(e, x, y, invert){
+								zoomMove: function(e, x, y, touch){
 									// syncing
 									var state = get('state');
 									if(!state.zoomUpdated) return;
@@ -886,12 +895,13 @@
 										$img = $zoomDiv.find('img'),
 										sourceSize = $img.outerWidth(),
 										size = $zoomDiv.outerWidth(),
-										offset = $zoomDiv.offset(),
-										ratio = (sourceSize - size) / size;
+										ratio = (sourceSize - size) / size,
+										left = parseInt($img.css('left'),10) || 0,
+										top = parseInt($img.css('top'),10) || 0;
 
-									if(invert){
-										var xoff = (x - size) * ratio;
-										var yoff = (y - size) * ratio;
+									if(touch){
+										var xoff = left + x/4;
+										var yoff = top + y/4;
 									}
 									else{
 										var xoff = (x * -ratio);
