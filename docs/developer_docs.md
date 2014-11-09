@@ -112,6 +112,9 @@ Enable gallery image display of the first 4 images from `gallery-images` with th
 #### Gallery Images `gallery-images`
 This attribute is a JSON encoded array of objects of the form `{"position": x, ...}` which is used to describe an ordered list of gallery image indicies from 0-108. Normally used with `gallery` for now, but is suitable for other applications in the future.
 
+#### Mouse Weel Zoom `wheel-zoom`
+Boolean attribute which can enable image zooming on mouse scroll events. This is disabled by default since it can interfer with regular page scrolling. Should be used in situations where the page is static and cannot be scrolled.
+
 #### Preload Images `preload`
 >To be considerate of bandwidth, this should not be used for multiple ZEV instances on the same page!
 

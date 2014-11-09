@@ -147,6 +147,7 @@
 			'idleAnimate' : {init :false},  //animate the reel when idle
 			'buttons' : {init: true}, // Show buttons - if you disable no zoom or help will be shown. mainly for auto-animate sitations.
 			'gallery' : {init: false}, //show gallery
+			'wheelZoom' : {init: false,}, // Zoom on `onmousewheel` events. Defaults off.
 			'galleryImages' : {init : [], type: 'array'},
 			'cdn' : {type: 'string', init: '{{image-cdn:url}}'},
 			'break' : {type: 'number', init: 2500},
@@ -754,15 +755,18 @@
 								mousewheel: function(e){
 									var state = get('state');
 									if(typeof state == 'undefined') return;
-									if (e.originalEvent.wheelDelta >= 0) {
-										if(!state.zoomed && $this.find(dot(pre+'btn-zoom')).length){
+									// This is optional behavior
+									if(get('wheelZoom')){
+										if (e.originalEvent.wheelDelta >= 0) {
+											if(!state.zoomed && $this.find(dot(pre+'btn-zoom')).length){
+												$this.find(dot(pre+'btn-zoom')).mouseup();
+												return false;
+											}
+										}
+										else if(state.zoomed){
 											$this.find(dot(pre+'btn-zoom')).mouseup();
 											return false;
 										}
-									}
-									else if(state.zoomed){
-										$this.find(dot(pre+'btn-zoom')).mouseup();
-										return false;
 									}
 								},
 
