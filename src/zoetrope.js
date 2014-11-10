@@ -211,8 +211,8 @@
 				var $this = $(this),
 					$applicable = $this.filter('img:not('+dot(zoe.cls.processed)+')[data-zoe-image]').each(function(){
 						var $this = $(this),
-							//cache original markup
-							$original = $this.clone(),
+							//cache original markup (set later on)
+							$original,
 							// simple get/set interface for state, bound to scope
 							get = function(key){ return $this.data(key); },
 							set = function(key, value){ return $this.data(key,value).data(key);},
@@ -314,8 +314,13 @@
 									$this.stop(true, true);
 									zoe.pool.unbind(on.pool);
 									$(window).unbind(on.window);
-									$this.replaceWith($original);
-									delete $this;
+									// replace with the original markup, copy
+									// data over.
+									var dataCache = $original.data();
+									var $newThis = $original.clone(true);
+									$newThis.data(dataCache);
+									$this.replaceWith($newThis);
+									$this = $newThis;
 								},
 
 								// Does most of the setup, following from on.setup()
@@ -982,7 +987,7 @@
 									$zboxOverlay.bind(evns(['mousedown', 'touchstart'], 'zbox'), function(e){ on.zbox.close(e); });
 
 									//attach events if required
-									if(!$._data($this[0], 'events'))
+									if(!hasEvents($this))
 											$this.bind(on.instance);
 
 									if ($zboxContent.height() >= $(window).height())
@@ -1002,11 +1007,11 @@
 
 									$this.trigger('teardown');
 									$zboxOverlay.fadeOut(200, function(){
-										$zboxContent.empty();
+										// Should only have a single child which is the
+										// virgin markup ready for opening again. (see 'teardown.zoetrope')
+										$zboxContent.children().detach();
 									});
 									$('embed.unhideThis, object.unhideThis').removeClass(zoe.cls.overlayUnhide).css('visibility', 'visible');
-									//make a copy of the original ready for another open
-									$this = $original.clone(true);
 								},
 							},
 
@@ -1301,6 +1306,15 @@
 		/* http://stackoverflow.com/questions/4817029/whats-the-best-way-to-detect-a-touch-screen-device-using-javascript */
 		return (('ontouchstart' in window) || // works on most browsers
 			(navigator.msMaxTouchPoints > 0));
+	}
+
+	function hasEvents($elem){
+		/* No choice but to do this differently depending on version.  */
+		var version = $ && $().jquery.split(/\./);
+		if (!version || +(twochar(version[0])+twochar(version[1])+twochar(version[2] || '')) < 10800){
+			return !!$elem.data('events');
+		}
+		return !!$._data($elem[0], 'events');
 	}
 
 	function addInstance($instance){ return (zoe.instances.push($instance[0])) && $instance; }
