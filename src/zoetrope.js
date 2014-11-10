@@ -418,6 +418,7 @@
 												$btn.data(oddClickName, !$btn.data(oddClickName));
 												return false;
 											});
+											$btn.bind('mousedown', function(){return false;})
 											$buttonArea.hide()
 											$buttonArea.find(dot(zoe.cls.buttonArea)).append($btn);
 											// jQuery adds 'style="display:inline;' for some reason, but we really don't want that
@@ -864,7 +865,7 @@
 									$zoomDiv.bind(evns('mousedown', 'capture'), capture);
 
 									//get stating positions if using touch
-									$zoomDiv.on(evns('touchstart', 'zoom'), startLocation);
+									$zoomDiv.bind(evns('touchstart', 'zoom'), startLocation);
 
 									//move to the buttons zoom position
 									$this.trigger('zoomMove', [size/2, size/2, false]);
@@ -1087,7 +1088,7 @@
 
 									}
 									//wait until preloading is progressing
-									else if(state.blittedFrameIndex === null){
+									else if(state.blittedFrameIndex === null && state.frames[displayIndex] !== null){
 										var $newFrame = state.frames[displayIndex];
 										$this.find('img:not('+dot(zoe.cls.frame)+')').remove();
 										$this.prepend($newFrame);
@@ -1307,7 +1308,12 @@
 
 		return ret;
 	}
-	function dataPrefix(name){ return 'zoe-' + name || ''; }
+	function dataPrefix(name){
+		// since pre jquery 1.6 doesnt support lower camelcase -> html 5 attr,
+		// do the conversion here.
+		var dashed = name.replace(/[A-Z]/, function(v) { return '-' + v.toLowerCase(); });
+		return ('zoe-' + dashed) || '';
+	}
 
 	function hasTouch(){
 		/* http://stackoverflow.com/questions/4817029/whats-the-best-way-to-detect-a-touch-screen-device-using-javascript */

@@ -1,7 +1,7 @@
 {
   "name": "jquery-zoetrope",
   "version": "3.0.1",
-  "repository": { 
+  "repository": {
     "type": "git",
     "url": "http://github.com/ZoetropeImaging/zoetrope-jquery.git"
   },
@@ -11,7 +11,7 @@
     "ecstatic": "~0.4.13",
     "execSync": "~1.0.1-pre",
     "gm": "^1.14.2",
-    "gulp": "~3.5.2",
+    "gulp": "~3.8.10",
     "gulp-base64": "0.0.3",
     "gulp-batch-replace": "0.0.0",
     "gulp-changed": "~0.1.0",
