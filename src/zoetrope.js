@@ -211,8 +211,8 @@
 				var $this = $(this),
 					$applicable = $this.filter('img:not('+dot(zoe.cls.processed)+')[data-zoe-image]').each(function(){
 						var $this = $(this),
-							//cache original markup (set later on)
-							$original,
+							//cache original markup for inline (popover done later).
+							$original = $this.clone(true),
 							// simple get/set interface for state, bound to scope
 							get = function(key){ return $this.data(key); },
 							set = function(key, value){ return $this.data(key,value).data(key);},
