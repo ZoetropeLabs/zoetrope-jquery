@@ -438,7 +438,7 @@
 												// convert index to angle, then using state
 												// convert back to being an index so that we
 												// compensate for differences in the number of frames etc
-												var pos = + v.position,
+												var pos = + v,
 													angleCol = (pos % 36) * 10,
 													angleRow = floor(pos / 36) * 30,
 													col = floor(angleCol/(360 / state.colCount)),
