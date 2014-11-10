@@ -270,7 +270,7 @@
 										//insert the trigger markup
 										$this.before($trigger);
 										$trigger.prepend($this);
-										$trigger.on('click', function(){
+										$trigger.bind('click', function(){
 											$trigger.before($this);
 											$trigger.remove();
 											$this.trigger('setup');
@@ -290,7 +290,7 @@
 									$this = $wrapper;
 									// Attach tiggers
 									on.zbox.attach();
-									$trigger.on(evns(['mouseup', 'touchstart'], 'zbox'), on.zbox.open);
+									$trigger.bind(evns(['mouseup', 'touchstart'], 'zbox'), on.zbox.open);
 
 									//save this as the inital state
 									$original = $this.clone(true);
@@ -298,7 +298,7 @@
 
 
 								//bind all instance handlers
-								$this.on(on.instance);
+								$this.bind(on.instance);
 
 								if(get('inline') && get('preload')){
 									$this.trigger('setup');
@@ -312,8 +312,8 @@
 								//destroy the instance
 								'teardown.zoetrope' : function(){
 									$this.stop(true, true);
-									zoe.pool.off(on.pool);
-									$(window).off(on.window);
+									zoe.pool.unbind(on.pool);
+									$(window).unbind(on.window);
 									$this.replaceWith($original);
 									delete $this;
 								},
@@ -354,13 +354,13 @@
 									state.row = floor(startPosition / 36) * 30;
 									//bind global stuff
 									addInstance($this);
-									zoe.pool.on(on.pool);
-									$(window).on(on.window);
+									zoe.pool.bind(on.pool);
+									$(window).bind(on.window);
 
 									// bind analytics
 									var analytics_events = zoe.analytics(get);
 									$.each(analytics_events, function(key, ev){
-										$this.on(evns(key, 'analytics'), ev);
+										$this.bind(evns(key, 'analytics'), ev);
 									})
 
 
@@ -390,7 +390,7 @@
 												$btn = tmpl(zoe.html.button, contents);
 
 											$btn.data(oddClickName, true);
-											$btn.on('mouseup touchstart',function(){
+											$btn.bind('mouseup touchstart',function(){
 												//callbacks that add the event triggering on $this
 												$this.stop(); //cancel animations
 												if($btn.data(oddClickName)){
@@ -420,7 +420,7 @@
 										//add the class now so that page reflows sooner
 										$this.addClass(zoe.cls.hasGallery);
 
-										$this.on('preloadEnd', function(){
+										$this.bind('preloadEnd', function(){
 											var $gallery = tmpl(zoe.html.galleryContainer),
 												images = get('galleryImages');
 
@@ -448,7 +448,7 @@
 												$image.attr('src', url);
 												$gallery.append($image);
 												//animation bind
-												$image.on('touchstart mouseover', function(){
+												$image.bind('touchstart mouseover', function(){
 													//Disable any active buttons
 													$(dot(zoe.cls.buttonArea) + ' ' + dot(zoe.cls.buttonActive)).mouseup();
 													$this.stop(true).animate({'zoetropeImage' : pos}, 500);
@@ -614,7 +614,7 @@
 									state.lastPanCursor = {x:x, y:y};
 									state.deltaCursor = [0, 0];
 									state.velocity = 0;
-									zoe.pool.on(evns(['mousemove','touchmove']), drag);
+									zoe.pool.bind(evns(['mousemove','touchmove']), drag);
 									zoe.pool.one(evns('mouseup'), lift);
 									zoe.pool.one(evns(['touchend', 'touchcancel', 'touchleave']), lift);
 									function drag(e){ return $this.trigger('pan', [pointer(e).clientX, pointer(e).clientY, e]) && e.give; }
@@ -632,7 +632,7 @@
 									var state = get('state'),
 										width = $this.width();
 
-									zoe.pool.off(evns());
+									zoe.pool.unbind(evns());
 									state.interactive = false;
 
 									// `state.deltaCursor` holds the last 2 deltas
@@ -705,7 +705,7 @@
 
 								showButtons : function(){
 									$this.find(dot(zoe.cls.buttonHotSpot)).fadeIn(200);
-									$this.off('showButtons');
+									$this.unbind('showButtons');
 								},
 
 								helpSetup: function(){
@@ -844,12 +844,12 @@
 									$zoomDiv.stop().css('display', 'block').fadeTo(100, 1);
 
 									//events on the zoom area
-									$zoomDiv.on(evns(['mouseleave'],'zoom'), leave);
-									$zoomDiv.on(evns(['mouseenter'],'zoom'), enter);
-									$zoomDiv.on(evns(['mousemove'], 'zoom'), move);
-									$zoomDiv.on(evns(['touchmove'], 'zoom'), invertedMove);
+									$zoomDiv.bind(evns(['mouseleave'],'zoom'), leave);
+									$zoomDiv.bind(evns(['mouseenter'],'zoom'), enter);
+									$zoomDiv.bind(evns(['mousemove'], 'zoom'), move);
+									$zoomDiv.bind(evns(['touchmove'], 'zoom'), invertedMove);
 									//prevent touches effecting position
-									$zoomDiv.on(evns('mousedown', 'capture'), capture);
+									$zoomDiv.bind(evns('mousedown', 'capture'), capture);
 
 									//get stating positions if using touch
 									$zoomDiv.on(evns('touchstart', 'zoom'), startLocation);
@@ -878,7 +878,7 @@
 									$zoomDiv.stop().fadeTo(100, 0, function(){
 										$zoomDiv.css('display', 'none').empty(); // Delete the zoom image
 									});
-									$this.off(evns(false,'zoom'));
+									$this.unbind(evns(false,'zoom'));
 									state.zoomed = false;
 								},
 
@@ -979,11 +979,11 @@
 									$('embed:visible, object:visible').addClass(zoe.cls.overlayUnhide).css('visibility', 'hidden');
 									$zboxOverlay.css('display','block').fadeIn(200, 0.6);
 									$zboxContent.append($this);
-									$zboxOverlay.on(evns(['mousedown', 'touchstart'], 'zbox'), function(e){ on.zbox.close(e); });
+									$zboxOverlay.bind(evns(['mousedown', 'touchstart'], 'zbox'), function(e){ on.zbox.close(e); });
 
 									//attach events if required
 									if(!$._data($this[0], 'events'))
-											$this.on(on.instance);
+											$this.bind(on.instance);
 
 									if ($zboxContent.height() >= $(window).height())
 										$(dot(zoe.cls.zboxOuter)).css('margin','0 auto');
@@ -1007,7 +1007,7 @@
 									$('embed.unhideThis, object.unhideThis').removeClass(zoe.cls.overlayUnhide).css('visibility', 'visible');
 									//make a copy of the original ready for another open
 									$this = $original.clone(true);
-								}
+								},
 							},
 
 							//pool events are bound to the page
@@ -1305,14 +1305,14 @@
 
 	function addInstance($instance){ return (zoe.instances.push($instance[0])) && $instance; }
 	function removeInstance($instance){ return (zoe.instances= zoe.instances.not($instance[0])) && $instance; }
-	function isInstance($elem){ return zoe.instances.is($elem) || false; }
+	function isInstance(elem){ return ( zoe.instances.toArray().indexOf(elem) != -1 ? true : false ); }
 	function leader(key){ return zoe.instances.first().data(key) }
 	function embedded(image){ return 'data:image/gif;base64,R0lGODlh' + image }
 	function tag(string){ return '<' + string + '/>' }
 	function dot(string){ return '.' + (string || '') }
 	function cdn(path){ return path.replace(_cdn_, zoe.cdn) }
 
-	// Event namespace - parse null for namespace or string to get namespaced event or array of events for $.fn.on() compatible string
+	// Event namespace - parse null for namespace or string to get namespaced event or array of events for $.fn.bind() compatible string
 	function evns(name, subNs){
 		if(typeof name === 'object' && name instanceof Array){
 			var events = ''
