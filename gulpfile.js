@@ -378,6 +378,7 @@ gulp.task('watch', ['default'], function () {
 
 	//gulp watch tasks
 	gulp.watch(paths.testHTML, ['html']);
+	gulp.watch(paths.testHTMLFiles, ['html']);
 	gulp.watch(paths.widget, ['javascript']);
 
 	var gfi = [];
