@@ -256,11 +256,13 @@
 								$wrapper = tmpl(zoe.html.widget);
 								$wrapper.data(data);
 
-								//set the size of the wrapper based on the size of the img
-								$wrapper.width($this.width() || 500);
 
 								//normal - load with page
 								if(get('inline')){
+									// Set the size of the wrapper based on the size of the img.
+									// Zbox will deal with this otherwise.
+									$wrapper.width($this.width() || 500);
+
 									$this.wrap($wrapper);
 									$this = $this.parent();
 
@@ -285,6 +287,11 @@
 									//insert the trigger markup
 									$this.before($trigger);
 									$trigger.prepend($this);
+
+									// Remove image sizes if we're going inside a popover
+									// makes it look right when the popover closes.
+									$this.removeAttr('width');
+									$this.removeAttr('height');
 
 									$wrapper.append($this.clone());
 									$this = $wrapper;
@@ -438,7 +445,7 @@
 												// convert index to angle, then using state
 												// convert back to being an index so that we
 												// compensate for differences in the number of frames etc
-												var pos = + v.position,
+												var pos = + v,
 													angleCol = (pos % 36) * 10,
 													angleRow = floor(pos / 36) * 30,
 													col = floor(angleCol/(360 / state.colCount)),

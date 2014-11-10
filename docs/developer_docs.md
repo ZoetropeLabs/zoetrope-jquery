@@ -110,7 +110,7 @@ Enable gallery image display of the first 4 images from `gallery-images` with th
 > This setting has to add some extra height (25% more than normal) to the viewer so that theres enough room for 4 thumbs.
 
 #### Gallery Images `gallery-images`
-This attribute is a JSON encoded array of objects of the form `{"position": x, ...}` which is used to describe an ordered list of gallery image indicies from 0-108. Normally used with `gallery` for now, but is suitable for other applications in the future.
+This attribute is a JSON encoded array of ints of the form `[x,y,...,z]` which is used to describe an ordered list of gallery image indicies from 0-108. Normally used with `gallery` for now, but is suitable for other applications in the future.
 
 #### Mouse Weel Zoom `wheel-zoom`
 Boolean attribute which can enable image zooming on mouse scroll events. This is disabled by default since it can interfer with regular page scrolling. Should be used in situations where the page is static and cannot be scrolled.
