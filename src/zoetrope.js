@@ -147,6 +147,7 @@
 			'idleAnimate' : {init :false},  //animate the reel when idle
 			'buttons' : {init: true}, // Show buttons - if you disable no zoom or help will be shown. mainly for auto-animate sitations.
 			'gallery' : {init: false}, //show gallery
+			'wheelZoom' : {init: false,}, // Zoom on `onmousewheel` events. Defaults off.
 			'galleryImages' : {init : [], type: 'array'},
 			'cdn' : {type: 'string', init: '{{image-cdn:url}}'},
 			'break' : {type: 'number', init: 2500},
@@ -158,7 +159,7 @@
 		initState : {
 			interactive: false, // True when the user is interacting
 			velocity: 0,
-			delta_cursor: [0,0], //used to store the last two deltas which are used for velocity calulation on `up`.
+			deltaCursor: [0,0], //used to store the last two deltas which are used for velocity calulation on `up`.
 			lastPanCursor : {x :0, y:0},
 			row: 0, //degrees [0-360]
 			col: 0, //degrees [0-90]
@@ -269,7 +270,7 @@
 										//insert the trigger markup
 										$this.before($trigger);
 										$trigger.prepend($this);
-										$trigger.on('click', function(){
+										$trigger.bind('click', function(){
 											$trigger.before($this);
 											$trigger.remove();
 											$this.trigger('setup');
@@ -289,7 +290,7 @@
 									$this = $wrapper;
 									// Attach tiggers
 									on.zbox.attach();
-									$trigger.on(evns(['mouseup', 'touchstart'], 'zbox'), on.zbox.open);
+									$trigger.bind(evns(['mouseup', 'touchstart'], 'zbox'), on.zbox.open);
 
 									//save this as the inital state
 									$original = $this.clone(true);
@@ -297,7 +298,7 @@
 
 
 								//bind all instance handlers
-								$this.on(on.instance);
+								$this.bind(on.instance);
 
 								if(get('inline') && get('preload')){
 									$this.trigger('setup');
@@ -311,8 +312,8 @@
 								//destroy the instance
 								'teardown.zoetrope' : function(){
 									$this.stop(true, true);
-									zoe.pool.off(on.pool);
-									$(window).off(on.window);
+									zoe.pool.unbind(on.pool);
+									$(window).unbind(on.window);
 									$this.replaceWith($original);
 									delete $this;
 								},
@@ -353,13 +354,13 @@
 									state.row = floor(startPosition / 36) * 30;
 									//bind global stuff
 									addInstance($this);
-									zoe.pool.on(on.pool);
-									$(window).on(on.window);
+									zoe.pool.bind(on.pool);
+									$(window).bind(on.window);
 
 									// bind analytics
 									var analytics_events = zoe.analytics(get);
 									$.each(analytics_events, function(key, ev){
-										$this.on(evns(key, 'analytics'), ev);
+										$this.bind(evns(key, 'analytics'), ev);
 									})
 
 
@@ -389,7 +390,7 @@
 												$btn = tmpl(zoe.html.button, contents);
 
 											$btn.data(oddClickName, true);
-											$btn.on('mouseup touchstart',function(){
+											$btn.bind('mouseup touchstart',function(){
 												//callbacks that add the event triggering on $this
 												$this.stop(); //cancel animations
 												if($btn.data(oddClickName)){
@@ -419,7 +420,7 @@
 										//add the class now so that page reflows sooner
 										$this.addClass(zoe.cls.hasGallery);
 
-										$this.on('preloadEnd', function(){
+										$this.bind('preloadEnd', function(){
 											var $gallery = tmpl(zoe.html.galleryContainer),
 												images = get('galleryImages');
 
@@ -447,7 +448,7 @@
 												$image.attr('src', url);
 												$gallery.append($image);
 												//animation bind
-												$image.on('touchstart mouseover', function(){
+												$image.bind('touchstart mouseover', function(){
 													//Disable any active buttons
 													$(dot(zoe.cls.buttonArea) + ' ' + dot(zoe.cls.buttonActive)).mouseup();
 													$this.stop(true).animate({'zoetropeImage' : pos}, 500);
@@ -611,9 +612,9 @@
 
 									state.interactive = true;
 									state.lastPanCursor = {x:x, y:y};
-									state.delta_cursor = [0, 0];
+									state.deltaCursor = [0, 0];
 									state.velocity = 0;
-									zoe.pool.on(evns(['mousemove','touchmove']), drag);
+									zoe.pool.bind(evns(['mousemove','touchmove']), drag);
 									zoe.pool.one(evns('mouseup'), lift);
 									zoe.pool.one(evns(['touchend', 'touchcancel', 'touchleave']), lift);
 									function drag(e){ return $this.trigger('pan', [pointer(e).clientX, pointer(e).clientY, e]) && e.give; }
@@ -631,11 +632,11 @@
 									var state = get('state'),
 										width = $this.width();
 
-									zoe.pool.off(evns());
+									zoe.pool.unbind(evns());
 									state.interactive = false;
 
-									// `state.delta_cursor` holds the last 2 deltas
-									state.velocity = (state.delta_cursor[0] + state.delta_cursor[1]) / 0.2;
+									// `state.deltaCursor` holds the last 2 deltas
+									state.velocity = (state.deltaCursor[0] + state.deltaCursor[1]) / 0.2;
 
 									//the delay before idle is 800ms, at which point we
 									//trigger the idle event
@@ -668,8 +669,8 @@
 											newCol = (state.col + change + 360) % 360;
 										state.col = newCol;
 										// update for velocity calcs
-										state.delta_cursor.push(delta.x)
-										state.delta_cursor.shift()
+										state.deltaCursor.push(delta.x)
+										state.deltaCursor.shift()
 									}
 									if (abs_delta.y > 0){
 										state.lastPanCursor.y = y;
@@ -704,7 +705,7 @@
 
 								showButtons : function(){
 									$this.find(dot(zoe.cls.buttonHotSpot)).fadeIn(200);
-									$this.off('showButtons');
+									$this.unbind('showButtons');
 								},
 
 								helpSetup: function(){
@@ -754,22 +755,28 @@
 								mousewheel: function(e){
 									var state = get('state');
 									if(typeof state == 'undefined') return;
-									if (e.originalEvent.wheelDelta >= 0) {
-										if(!state.zoomed && $this.find(dot(pre+'btn-zoom')).length){
+									// This is optional behavior
+									if(get('wheelZoom')){
+										if (e.originalEvent.wheelDelta >= 0) {
+											if(!state.zoomed && $this.find(dot(pre+'btn-zoom')).length){
+												$this.find(dot(pre+'btn-zoom')).mouseup();
+												return false;
+											}
+										}
+										else if(state.zoomed){
 											$this.find(dot(pre+'btn-zoom')).mouseup();
 											return false;
 										}
-									}
-									else if(state.zoomed){
-										$this.find(dot(pre+'btn-zoom')).mouseup();
-										return false;
 									}
 								},
 
 								'touchstart.zoom': function(e){
 									var state = get('state');
 									if(typeof state == 'undefined') return;
-									state.touchstart = e.originalEvent.touches;
+									if(e.originalEvent.touches.length == 2){
+										state.touchstart = e.originalEvent.touches;
+										e.preventDefault();
+									}
 								},
 
 								'touchend.zoom' : function(e){
@@ -782,21 +789,32 @@
 									var state = get('state');
 									if(typeof state == 'undefined') return;
 									if(state.touchstart && e.originalEvent.touches.length == 2){
-										var pinch1_f1 = state.touchstart[0],
-											pinch1_f2 = state.touchstart[1],
-											pinch2_f1 = e.originalEvent.touches[0],
-											pinch2_f2 = e.originalEvent.touches[1],
-											pinch1_size = sqrt(sq(pinch1_f1.clientX - pinch1_f2.clientX) + sq(pinch1_f1.clientY - pinch1_f2.clientY)),
-											pinch2_size = sqrt(sq(pinch2_f1.clientX - pinch2_f2.clientX) + sq(pinch2_f1.clientY - pinch2_f2.clientY)),
-											scaleUp = pinch2_size > (pinch1_size+20),
-											scaleDown = pinch2_size < (pinch1_size-20); //20's a threshold
 
-										if (scaleUp && !state.zoomed) {
+										var scale = 1;
+										// use scale on event object if provided.
+										if(typeof e.originalEvent.scale !== 'undefined'){
+											scale = e.originalEvent.scale;
+										}
+										else{
+											var pinch1_f1 = state.touchstart[0],
+												pinch1_f2 = state.touchstart[1],
+												pinch2_f1 = e.originalEvent.targetTouches[0],
+												pinch2_f2 = e.originalEvent.targetTouches[1],
+												pinch1_size = sqrt(sq(pinch1_f1.clientX - pinch1_f2.clientX) + sq(pinch1_f1.clientY - pinch1_f2.clientY)),
+												pinch2_size = sqrt(sq(pinch2_f1.clientX - pinch2_f2.clientX) + sq(pinch2_f1.clientY - pinch2_f2.clientY)),
+												scaleUp = pinch2_size > (pinch1_size+20),
+												scaleDown = pinch2_size < (pinch1_size-20); //20's a threshold
+
+												scale = (scaleUp * 2) || (scaleDown * -0.5) || (!scaleUp && !scaleDown);
+										}
+
+										if (scale > 1 && !state.zoomed) {
 											$this.find(dot(pre+'btn-zoom')).mouseup();
 										}
-										else if(state.zoomed && scaleDown){
+										else if(state.zoomed && scale < 1){
 											$this.find(dot(pre+'btn-zoom')).mouseup();
 										}
+										e.preventDefault();
 									}
 								},
 
@@ -807,7 +825,7 @@
 									$this.append($zoomDiv);
 								},
 
-								zoomStart: function(){
+								zoomStart: function(e){
 									var state = get('state'),
 										$zoomDiv = $this.find(dot(zoe.cls.zoom)),
 										zoomUrl = getZoomSrc(state.blittedFrameIndex),
@@ -826,23 +844,32 @@
 									$zoomDiv.stop().css('display', 'block').fadeTo(100, 1);
 
 									//events on the zoom area
-									$zoomDiv.on(evns(['mouseleave'],'zoom'), leave);
-									$zoomDiv.on(evns(['mouseenter'],'zoom'), enter);
-									$zoomDiv.on(evns(['mousemove'], 'zoom'), move);
-									$zoomDiv.on(evns(['touchmove'], 'zoom'), invertedMove);
+									$zoomDiv.bind(evns(['mouseleave'],'zoom'), leave);
+									$zoomDiv.bind(evns(['mouseenter'],'zoom'), enter);
+									$zoomDiv.bind(evns(['mousemove'], 'zoom'), move);
+									$zoomDiv.bind(evns(['touchmove'], 'zoom'), invertedMove);
 									//prevent touches effecting position
-									$zoomDiv.on(evns('mousedown', 'capture'), capture);
+									$zoomDiv.bind(evns('mousedown', 'capture'), capture);
+
+									//get stating positions if using touch
+									$zoomDiv.on(evns('touchstart', 'zoom'), startLocation);
 
 									//move to the buttons zoom position
-									$this.trigger('zoomMove', [size/2, size/2, true]);
+									$this.trigger('zoomMove', [size/2, size/2, false]);
 
 									state.zoomed = true;
 
 									function move(e){ var offset = $this.offset(); $this.trigger('zoomMove', [pointer(e).pageX - offset.left, pointer(e).pageY - offset.top, false, e]); return false;}
-									function invertedMove(e){ var offset = $this.offset(); $this.trigger('zoomMove', [pointer(e).pageX - offset.left, pointer(e).pageY - offset.top, true, e]); return false;}
+									function invertedMove(e){ var offset = state.zoomTouchStartCords; $this.trigger('zoomMove', [pointer(e).pageX - offset.pageX, pointer(e).pageY - offset.pageY, true, e]); return false;}
 									function leave(){ $this.trigger('zoomLeave'); return false; }
 									function enter(){ $this.trigger('zoomEnter'); return false; }
 									function capture(){ return false;}
+									function startLocation(e){
+										state.zoomTouchStartCords = {
+											pageX: e.originalEvent.touches[0].pageX,
+											pageY: e.originalEvent.touches[0].pageY
+										};
+									}
 								},
 
 								zoomEnd: function(){
@@ -851,14 +878,14 @@
 									$zoomDiv.stop().fadeTo(100, 0, function(){
 										$zoomDiv.css('display', 'none').empty(); // Delete the zoom image
 									});
-									$this.off(evns(false,'zoom'));
+									$this.unbind(evns(false,'zoom'));
 									state.zoomed = false;
 								},
 
 								// Set the image margins etc
 								// There are some shortcuts because we know the image is square.
 								// Also synced with the page timer
-								zoomMove: function(e, x, y, invert){
+								zoomMove: function(e, x, y, touch){
 									// syncing
 									var state = get('state');
 									if(!state.zoomUpdated) return;
@@ -868,12 +895,13 @@
 										$img = $zoomDiv.find('img'),
 										sourceSize = $img.outerWidth(),
 										size = $zoomDiv.outerWidth(),
-										offset = $zoomDiv.offset(),
-										ratio = (sourceSize - size) / size;
+										ratio = (sourceSize - size) / size,
+										left = parseInt($img.css('left'),10) || 0,
+										top = parseInt($img.css('top'),10) || 0;
 
-									if(invert){
-										var xoff = (x - size) * ratio;
-										var yoff = (y - size) * ratio;
+									if(touch){
+										var xoff = left + x/4;
+										var yoff = top + y/4;
 									}
 									else{
 										var xoff = (x * -ratio);
@@ -951,11 +979,11 @@
 									$('embed:visible, object:visible').addClass(zoe.cls.overlayUnhide).css('visibility', 'hidden');
 									$zboxOverlay.css('display','block').fadeIn(200, 0.6);
 									$zboxContent.append($this);
-									$zboxOverlay.on(evns(['mousedown', 'touchstart'], 'zbox'), function(e){ on.zbox.close(e); });
+									$zboxOverlay.bind(evns(['mousedown', 'touchstart'], 'zbox'), function(e){ on.zbox.close(e); });
 
 									//attach events if required
 									if(!$._data($this[0], 'events'))
-											$this.on(on.instance);
+											$this.bind(on.instance);
 
 									if ($zboxContent.height() >= $(window).height())
 										$(dot(zoe.cls.zboxOuter)).css('margin','0 auto');
@@ -979,7 +1007,7 @@
 									$('embed.unhideThis, object.unhideThis').removeClass(zoe.cls.overlayUnhide).css('visibility', 'visible');
 									//make a copy of the original ready for another open
 									$this = $original.clone(true);
-								}
+								},
 							},
 
 							//pool events are bound to the page
@@ -1277,14 +1305,14 @@
 
 	function addInstance($instance){ return (zoe.instances.push($instance[0])) && $instance; }
 	function removeInstance($instance){ return (zoe.instances= zoe.instances.not($instance[0])) && $instance; }
-	function isInstance($elem){ return zoe.instances.is($elem) || false; }
+	function isInstance(elem){ return ( zoe.instances.toArray().indexOf(elem) != -1 ? true : false ); }
 	function leader(key){ return zoe.instances.first().data(key) }
 	function embedded(image){ return 'data:image/gif;base64,R0lGODlh' + image }
 	function tag(string){ return '<' + string + '/>' }
 	function dot(string){ return '.' + (string || '') }
 	function cdn(path){ return path.replace(_cdn_, zoe.cdn) }
 
-	// Event namespace - parse null for namespace or string to get namespaced event or array of events for $.fn.on() compatible string
+	// Event namespace - parse null for namespace or string to get namespaced event or array of events for $.fn.bind() compatible string
 	function evns(name, subNs){
 		if(typeof name === 'object' && name instanceof Array){
 			var events = ''

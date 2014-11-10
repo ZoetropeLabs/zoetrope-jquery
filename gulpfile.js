@@ -29,7 +29,8 @@ var fs = require('fs'),
 	runSequence = require('run-sequence'),
 	svg2png = require('gulp-rsvg'),
 	imagemin = require('gulp-imagemin'),
-	pngcrush = require('imagemin-pngcrush');
+	pngcrush = require('imagemin-pngcrush'),
+	open = require('open');
 
 
 var port = '8888';
@@ -371,26 +372,9 @@ gulp.task('watch', ['default'], function () {
 	).listen(port);
 	console.log('Listening on :' + port);
 
-	var child = spawn(
-		'xdg-open', ['http://localhost:' + port + '/' + gitBranch + '/index.html']
-	);
-
-	var stdout = '',
-		stderr = '';
-
-	child.stdout.setEncoding('utf8');
-
-	child.stdout.on('data', function (data) {
-		stdout += data;
-		gutil.log(data);
-	});
-
-	child.stderr.setEncoding('utf8');
-	child.stderr.on('data', function (data) {
-		stderr += data;
-		gutil.log(gutil.colors.red(data));
-		gutil.beep();
-	});
+	//open the page in the users browser
+	var pageURL = 'http://localhost:' + port + '/' + gitBranch + '/index.html';
+	open(pageURL);
 
 	//gulp watch tasks
 	gulp.watch(paths.testHTML, ['html']);
