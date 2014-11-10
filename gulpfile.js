@@ -59,8 +59,7 @@ var paths = {
 	},
 	less: 'less/style.less',
 	htc: 'less/backgroundsize.min.htc',
-	testHTML: 'src/test.html',
-	testHTMLFiles: ['src/testInline.html','src/testPopover.html'],
+	testHTMLFiles: 'src/*.html',
 	docs:'docs/developer_docs.md',
 	languageStringsCSV: 'https://docs.google.com/spreadsheets/d/1y5McuTIe4G7F0xKM6JPm6STRKOHxE1G2IkDMiSxSeKo/export?format=csv&id=1y5McuTIe4G7F0xKM6JPm6STRKOHxE1G2IkDMiSxSeKo&gid=52872048',
 	mobileDetect: 'http://detectmobilebrowsers.com/download/jquery',
@@ -170,7 +169,7 @@ gulp.task('watch-docs', ['docs'], function (){
 	gulp.watch(paths.docs, ['docs']);
 });
 
-gulp.task('less', ['htc'], function () {
+gulp.task('less', ['htc', 'convert-images'], function () {
 	gulp.src(paths.less)
 		.pipe(less({
 			paths: [path.join(__dirname, 'less', 'includes')]
@@ -288,13 +287,9 @@ gulp.task('detect-mobile', function(){
 });
 
 gulp.task('html', function () {
-	 gulp.src(paths.testHTML)
-	.pipe(replace(replacements))
-	.pipe(rename('index.html'))
-	.pipe(gulp.dest(paths.dist));
-	 return gulp.src(paths.testHTMLFiles)
-		 .pipe(replace(replacements))
-		 .pipe(gulp.dest(paths.dist));
+	return gulp.src(paths.testHTMLFiles)
+		.pipe(replace(replacements))
+		.pipe(gulp.dest(paths.dist));
 });
 
 gulp.task('javascript', function () {
@@ -358,38 +353,6 @@ gulp.task('test', ['default'], function () {
 
 });
 
-// Rerun the task when a file changes
-gulp.task('watch', ['default'], function () {
-
-	//set up http server
-	http.createServer(
-		ecstatic({
-			root: 'dist/',
-			showDir: true,
-			autoIndex : true,
-			cache : 0,
-		})
-	).listen(port);
-	console.log('Listening on :' + port);
-
-	//open the page in the users browser
-	var pageURL = 'http://localhost:' + port + '/' + gitBranch + '/index.html';
-	open(pageURL);
-
-	//gulp watch tasks
-	gulp.watch(paths.testHTML, ['html']);
-	gulp.watch(paths.testHTMLFiles, ['html']);
-	gulp.watch(paths.widget, ['javascript']);
-
-	var gfi = [];
-	for(var i in paths.gfi){
-		gfi.push(paths.gfi[i]);
-	}
-	gulp.watch(gfi, ['javascript']);
-	gulp.watch('less/*', ['less']);
-	gulp.watch(paths.svgs, ['convert-images'])
-});
-
 gulp.task('build-keen', function() {
 	var result = sh.exec('cd lib/keen; grunt');
 	console.log(result.stderr);
@@ -406,16 +369,45 @@ gulp.task('convert-images', function(cb) {
 		.pipe(gulp.dest(paths.dist + '/img'));
 });
 
+// Rerun the task when a file changes
+gulp.task('watch', ['default'], function () {
+
+	//set up http server
+	http.createServer(
+		ecstatic({
+			root: 'dist/',
+			showDir: true,
+			autoIndex : true,
+			cache : 0,
+		})
+	).listen(port);
+	console.log('Listening on :' + port);
+
+	//open the page in the users browser
+	var pageURL = 'http://localhost:' + port + '/' + gitBranch + '/test.html';
+	open(pageURL);
+
+	//gulp watch tasks
+	gulp.watch(paths.testHTMLFiles, ['html']);
+	gulp.watch(paths.widget, ['javascript']);
+
+	var gfi = [];
+	for(var i in paths.gfi){
+		gfi.push(paths.gfi[i]);
+	}
+	gulp.watch(gfi, ['javascript']);
+	gulp.watch('less/*', ['less']);
+	gulp.watch(paths.svgs, ['convert-images'])
+});
+
+
 // Get some language strings etc
 gulp.task('fetch', ['detect-mobile','lang-strings', 'build-keen']);
 
-gulp.task('build-all', ['less', 'javascript', 'html', 'convert-images']);
-
+gulp.task('build-all', ['less', 'javascript', 'html']);
 
 // The default task (called when you run `gulp` from cli)
-gulp.task('default', function() {
-	runSequence('fetch', 'build-all');
-});
+gulp.task('default', ['build-all']);
 
 var imagemin = require('gulp-imagemin');
 var pngcrush = require('imagemin-pngcrush');
