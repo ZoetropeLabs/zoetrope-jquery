@@ -421,7 +421,7 @@
 											});
 
 
-											$btn.bind('mouseup touchstart',[event], cb);
+											$btn.bind('mouseup touchstart', cb);
 											$btn.bind('mousedown', function(){return false;})
 											$buttonArea.hide()
 											$buttonArea.find(dot(zoe.cls.buttonArea)).append($btn);
