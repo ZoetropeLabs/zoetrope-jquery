@@ -867,7 +867,7 @@
 									if (isTouchEvent(ev)) {
 										$zoomDiv.bind(evns(['touchmove'], 'zoom'), invertedMove);
 									}
-									else {	
+									else {
 										$zoomDiv.bind(evns(['mousemove'], 'zoom'), move);
 									}
 									//prevent touches effecting position
@@ -992,6 +992,11 @@
 										$('body').append($zboxOverlay);
 										$zboxContent.click(function(){return false;}); //isolate child from propogating clicks
 									}
+									//attach resize.
+									$zboxOverlay.bind('zboxResize', on.zbox.zboxResize);
+									zoe.pool.bind('resize', $.throttle(500, function(){
+										$zboxOverlay.trigger('zboxResize');
+									}));
 								},
 								'open': function(ev){
 									var $zboxOverlay = $(hash(zoe.id.zboxOverlay)),
@@ -1007,10 +1012,7 @@
 									if(!hasEvents($this))
 											$this.bind(on.instance);
 
-									if ($zboxContent.height() >= $(window).height())
-										$(dot(zoe.cls.zboxOuter)).css('margin','0 auto');
-
-
+									$zboxContent.trigger('zboxResize');
 									$this.trigger('setup');
 								},
 								'close': function(ev){
@@ -1029,6 +1031,15 @@
 										$zboxContent.children().detach();
 									});
 									$('embed.unhideThis, object.unhideThis').removeClass(zoe.cls.overlayUnhide).css('visibility', 'visible');
+								},
+								zboxResize : function(){
+									var size = min(zoe.pool.height(), zoe.pool.width()),
+										$zboxContent = $(hash(zoe.id.zboxContent));
+
+									if ($zboxContent.height() >= zoe.pool.height())
+										$(dot(zoe.cls.zboxOuter)).css('margin','0 auto');
+
+									$zboxContent.parent().width(size);
 								},
 							},
 
