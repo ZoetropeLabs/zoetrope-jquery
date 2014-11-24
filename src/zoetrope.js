@@ -737,8 +737,11 @@
 										};
 										if(name == 'brand'){
 											settings.text = $('<a>').text(zoe.brandShort).attr('href', zoe.helpLink)[0].outerHTML;
-											settings.image = $('<a>').addClass(zoe.cls.helpImage).text(zoe.brand)
-																		.attr('title', zoe.brand).attr('href', zoe.helpLink)[0].outerHTML;
+											settings.image = $('<a>').addClass(zoe.cls.helpImage)
+																	 .text(zoe.brand)
+																	 .attr('title', zoe.brand)
+																	 .attr('target', '_blank')
+																	 .attr('href', zoe.helpLink)[0].outerHTML;
 										}
 										sections.push(settings);
 									}
