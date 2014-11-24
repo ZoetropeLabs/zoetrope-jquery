@@ -5,7 +5,7 @@
 set -e
 
 #Use the secure private key to clone the private github repo.
-ssh-agent (ssh-add ~/.ssh/id_ci_github; git clone git@github.com:ZoetropeImaging/widget.git)
+ssh-agent bash -c "ssh-add ~/.ssh/id_ci_github; git clone git@github.com:ZoetropeImaging/widget.git"
 
 cd widget
 git submodule init
