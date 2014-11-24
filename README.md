@@ -1,3 +1,5 @@
+![Travis Status](https://travis-ci.org/ZoetropeImaging/zoetrope-jquery.svg)
+
 # Zoetrope Jquery
 
 ## Introduction
