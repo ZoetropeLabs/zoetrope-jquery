@@ -25,6 +25,7 @@
 @z-button-area: 7;
 @z-cta : 8;
 @z-gallery: 9;
+@z-error: 9;
 
 //---------------------------------------
 // Super helpers
@@ -80,8 +81,8 @@
 
 .border-box(){
 	-webkit-box-sizing: border-box; // Safari/Chrome, other WebKit
-    -moz-box-sizing: border-box;    // Firefox, other Gecko
-    box-sizing: border-box;         // Opera/IE 8+
+	-moz-box-sizing: border-box;    // Firefox, other Gecko
+	box-sizing: border-box;         // Opera/IE 8+
 }
 
 //---------------------------------------
@@ -139,7 +140,7 @@ div.@{pre}engage-trigger img {
 
 	display: inline-block;
 	zoom: 1;
-    *display: inline;
+	*display: inline;
 
 	width: 100%;
 	max-width: 100%;
@@ -154,7 +155,7 @@ div.@{pre}engage-trigger img {
 	background-color: #fff;
 
 	//Image frames
-	img.@{pre}frame, div.@{pre}frame-cover{
+	img.@{pre}frame, div.@{pre}frame-cover, div.@{pre}error-wrapper{
 		width: 100%;
 		height: auto;
 		position: absolute;
@@ -190,8 +191,7 @@ div.@{pre}engage-trigger img {
 		cursor: pointer;
 		.hide-text;
 		.no-select;
-		background-size: @button-size @button-size;
-		-ms-behavior: url({{cdn:base}}/css/backgroundsize.min.htc);
+		.background-square(@button-size);
 	}
 
 	.@{pre}btn-zoom{
@@ -339,6 +339,39 @@ div.@{pre}engage-trigger img {
 		.background-shape(100%, auto);
 		z-index: 2;
 	}
+
+	//errors
+	div.@{pre}error-wrapper{
+		width: 70%;
+		height: 70%;
+		padding: 15%;
+		z-index: @z-error;
+		.rgba-background(#1d1d1b, 0.8);
+	}
+	.@{pre}error-icon{
+		float: left;
+		width: 25%;
+		height: 25%;
+		background-image: url(img/error.png);
+		.background-square(100%);
+		margin-top: 37.5%;
+	}
+	.@{pre}error-icon:before{
+		content: ' ';
+	}
+	.@{pre}error-text{
+		float: left;
+		width: 55%;
+		height: 100%;
+		padding: 0 10%;
+		display: table;
+		p{
+			display: table-cell;
+			vertical-align: middle;
+			text-align: center;
+		}
+	}
+
 	//cta's
 	.@{pre}interact-cta{
 		z-index: @z-cta;
@@ -381,6 +414,9 @@ div.@{pre}engage-trigger img {
 
 	.@{pre}help-wrapper{
 		height: 64%;
+	}
+	div.@{pre}error-wrapper{
+		height: 56%;
 	}
 
 	.@{pre}zoom, div.@{pre}frame-cover{

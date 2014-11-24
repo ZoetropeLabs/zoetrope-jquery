@@ -84,7 +84,10 @@
 			zboxOuter : pre+'zbox-outer',
 			galleryContainer : pre+'gallery',
 			galleryImage : pre+'gallery-image',
-			hasGallery : pre+'gallery'
+			hasGallery : pre+'gallery',
+			errorWrapper : pre+'error-wrapper',
+			errorIcon : pre+'error-icon',
+			errorText : pre+'error-text',
 		},
 
 		id :{
@@ -122,7 +125,11 @@
 			zboxOverlay : '<div id="<%=zoe.id.zboxOverlay%>"></div>',
 			zboxContent : '<div class="<%=zoe.cls.zboxOuter%>"><div id="<%=zoe.id.zboxContent%>"></div></div>',
 			galleryContainer : '<div class="<%=zoe.cls.galleryContainer%>"></div>',
-			galleryImage : '<img class="<%=zoe.cls.galleryImage%>" />'
+			galleryImage : '<img class="<%=zoe.cls.galleryImage%>" />',
+			error: '<div class="<%=zoe.cls.errorWrapper%>"> \
+						<div class="<%=zoe.cls.errorIcon%>"></div> \
+						<div class="<%=zoe.cls.errorText%>"><p><%=zoe.strs.connErr%></p></div> \
+					</div>',
 		},
 
 		// language strings, `strs` will contain the active language
@@ -152,7 +159,8 @@
 			'cdn' : {type: 'string', init: '{{image-cdn:url}}'},
 			'break' : {type: 'number', init: 2500},
 			'lang': {type: 'string', init: (window.navigator.userLanguage || window.navigator.language)},
-			'size' : {type: 'enum', init: 0, options:[0,250,500,1000]}
+			'size' : {type: 'enum', init: 0, options:[0,250,500,1000]},
+			'errorTimeout' : {type: 'number', init: 2000, process: false}, // error message show time
 		},
 
 		// The initial state of the element
@@ -178,7 +186,8 @@
 			preloadStartTime : 0, // start time for end time estimation
 			progressPercentage : 0, //set separately for the progress bar
 			progressMax : false, // the frame to use as 100% on the preload
-			loaded : false
+			loaded : false,
+			errorTimeout : false, // Used to delay hiding the error message
 		},
 
 		//pool for binding events to
@@ -403,7 +412,7 @@
 
 											$btn.data(oddClickName, true);
 
-											var cb = $.throttle(500,true, function(e) {
+											var buttonToggle = function(e) {
 												//callbacks that add the event triggering on $this
 												$this.stop(); //cancel animations
 												if($btn.data(oddClickName)){
@@ -418,11 +427,12 @@
 												}
 												$btn.data(oddClickName, !$btn.data(oddClickName));
 												return false;
-											});
+											};
 
 
-											$btn.bind('mouseup touchstart', cb);
-											$btn.bind('mousedown', function(){return false;})
+											$btn.bind('mouseup touchstart', $.throttle(500,true, buttonToggle));
+											$btn.bind('mousedown', function(){return false;});
+											$btn.bind('toggle', buttonToggle);
 											$buttonArea.hide()
 											$buttonArea.find(dot(zoe.cls.buttonArea)).append($btn);
 											// jQuery adds 'style="display:inline;' for some reason, but we really don't want that
@@ -509,8 +519,8 @@
 										var	$img = $('<img>')
 														.addClass(zoe.cls.frame).addClass(zoe.cls.frameIndicator+index)
 														.attr('draggable', 'false')
-														.load(function(){ $this.trigger('preload') } );
-														.attr('src', getImageSrc(index))
+														.load(function(){ $this.trigger('preload') } )
+														.attr('src', getImageSrc(index));
 										state.frames[index] = $img;
 										state.preloadProgress++;
 										index = getNextIndex(state);
@@ -725,6 +735,39 @@
 									$this.unbind('showButtons');
 								},
 
+								// Shows an error message.
+								showError : function(){
+									var state = get('state');
+
+									//show message
+									if(!$(dot(zoe.cls.errorWrapper), $this).length){
+										var $err = tmpl(zoe.html.error);
+										// prevent events firing while message is showing
+										$err.bind('touchstart mousedown', function(){
+											return false;
+										});
+										$this.append($err);
+									}
+
+									var timeout = get('errorTimeout');
+
+									if(!state.loaded && !state.errorTimeout){
+										//if not loaded yet, we need to bail
+										state.errorTimeout = setTimeout(function(){$this.unZoetrope();}, timeout);
+									}
+									else if(!state.errorTimeout){
+										state.errorTimeout = setTimeout(function(){$this.trigger('hideError');}, timeout);
+										// toggle off the mouse button
+										$(dot(pre+'btn-zoom', $this)).trigger('toggle');
+									}
+								},
+
+								hideError : function(){
+									var state = get('state');
+									$this.find(dot(zoe.cls.errorWrapper)).remove();
+									state.errorTimeout = false;
+								},
+
 								helpSetup: function(){
 									var sections = [],
 										tiles = ['rotate', 'elevate', 'zoom', 'brand'];
@@ -856,9 +899,12 @@
 
 									//add the image to zoom
 									$('<img>')
-										.attr('src', zoomUrl)
 										.addClass(zoe.cls.zoomFrame)
-										.appendTo($zoomDiv);
+										.appendTo($zoomDiv)
+										.error(function(){
+											$this.trigger('showError')
+										})
+										.attr('src', zoomUrl);
 
 									//show the zoom div
 									$zoomDiv.stop().css('display', 'block').fadeTo(100, 1);

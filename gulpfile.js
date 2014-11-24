@@ -233,6 +233,7 @@ function makeLangugeObject(lang, defaultLang) {
 		rotate: getString('Rotate'),
 		elevate: getString('Elevate'),
 		zoom: getString('Zoom'),
+		connErr : getString('Cannot load, internet connection lost.'),
 		changed: lang.Timestamp,
 	};
 
@@ -310,7 +311,7 @@ gulp.task('javascript', function () {
 				drop_console: true
 			},
 			preserveComments: comment_preserve
-		})) //the minified version drops all the console logging
+		}).on('error', function(e) { console.log('\x07',e.message); console.log(e); return this.end(); })) //the minified version drops all the console logging
 		.pipe(rename(module_name+'.min.uncomp.js')) //Keep a dev version without gzipping
 		.pipe(gulp.dest(paths.dist + '/js'))
 		.pipe(gzip())
