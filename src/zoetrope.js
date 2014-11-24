@@ -403,22 +403,26 @@
 												$btn = tmpl(zoe.html.button, contents);
 
 											$btn.data(oddClickName, true);
-											$btn.bind('mouseup touchstart',function(){
+
+											var cb = $.throttle(500,true, function(e) {
 												//callbacks that add the event triggering on $this
 												$this.stop(); //cancel animations
 												if($btn.data(oddClickName)){
 													$(this).addClass(zoe.cls.buttonActive);
 													//deactivate other buttons
 													$btn.siblings(dot(zoe.cls.buttonActive)).mouseup();
-													$this.trigger(name+'Start');
+													$this.trigger(name+'Start', [e]);
 												}
 												else{
 													$btn.removeClass(zoe.cls.buttonActive);
-													$this.trigger(name+'End');
+													$this.trigger(name+'End', [e]);
 												}
 												$btn.data(oddClickName, !$btn.data(oddClickName));
 												return false;
 											});
+
+
+											$btn.bind('mouseup touchstart', cb);
 											$btn.bind('mousedown', function(){return false;})
 											$buttonArea.hide()
 											$buttonArea.find(dot(zoe.cls.buttonArea)).append($btn);
@@ -842,7 +846,7 @@
 									$this.append($zoomDiv);
 								},
 
-								zoomStart: function(e){
+								zoomStart: function(e,ev){
 									var state = get('state'),
 										$zoomDiv = $this.find(dot(zoe.cls.zoom)),
 										zoomUrl = getZoomSrc(state.blittedFrameIndex),
@@ -863,8 +867,13 @@
 									//events on the zoom area
 									$zoomDiv.bind(evns(['mouseleave'],'zoom'), leave);
 									$zoomDiv.bind(evns(['mouseenter'],'zoom'), enter);
-									$zoomDiv.bind(evns(['mousemove'], 'zoom'), move);
-									$zoomDiv.bind(evns(['touchmove'], 'zoom'), invertedMove);
+
+									if (isTouchEvent(ev)) {
+										$zoomDiv.bind(evns(['touchmove'], 'zoom'), invertedMove);
+									}
+									else {	
+										$zoomDiv.bind(evns(['mousemove'], 'zoom'), move);
+									}
 									//prevent touches effecting position
 									$zoomDiv.bind(evns('mousedown', 'capture'), capture);
 
@@ -876,7 +885,7 @@
 
 									state.zoomed = true;
 
-									function move(e){ var offset = $this.offset(); $this.trigger('zoomMove', [pointer(e).pageX - offset.left, pointer(e).pageY - offset.top, false, e]); return false;}
+									function move(e){var offset = $this.offset(); $this.trigger('zoomMove', [pointer(e).pageX - offset.left, pointer(e).pageY - offset.top, false, e]); return false;}
 									function invertedMove(e){ var offset = state.zoomTouchStartCords; $this.trigger('zoomMove', [pointer(e).pageX - offset.pageX, pointer(e).pageY - offset.pageY, true, e]); return false;}
 									function leave(){ $this.trigger('zoomLeave'); return false; }
 									function enter(){ $this.trigger('zoomEnter'); return false; }
@@ -1334,6 +1343,7 @@
 		return !!$._data($elem[0], 'events');
 	}
 
+	function isTouchEvent(e) { return (e.type.indexOf('touch') > -1); }
 	function addInstance($instance){ return (zoe.instances.push($instance[0])) && $instance; }
 	function removeInstance($instance){ return (zoe.instances= zoe.instances.not($instance[0])) && $instance; }
 	function isInstance(elem){ return ( zoe.instances.toArray().indexOf(elem) != -1 ? true : false ); }
