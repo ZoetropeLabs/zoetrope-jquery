@@ -15,8 +15,9 @@ git checkout $TRAVIS_BRANCH
 npm install
 cd ../..
 npm install
+gulp-fetch
 gulp
-http-server -p 8111 zoetrope-jquery/dist
+
 
 
 
