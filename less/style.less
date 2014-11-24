@@ -69,6 +69,8 @@
 	user-select: none;
 	-moz-user-select: none;
 	-webkit-user-select: none;
+	-ms-user-select: none;
+	-khtml-user-select: none;
 }
 
 .border-radius (@radius: 7.5px) {
@@ -87,6 +89,11 @@
 //---------------------------------------
 // Styles
 //---------------------------------------
+
+// Zoetrope body class
+body.@{pre}active{
+	.no-select();
+}
 
 /* trigger link */
 .@{pre}engage-trigger, .@{pre}engage-trigger:focus{
@@ -236,15 +243,15 @@ div.@{pre}engage-trigger img {
 	.@{pre}help-wrapper{
 		.rgba-background(#1d1d1b, 0.8);
 		position: absolute;
-		top:35px;
+		top:5%;
 		right: 55px;
 		width:80%;
-		height:75%;
+		height:80%;
 		.border-radius;
 		overflow: hidden;
 		z-index: 4;
 
-		padding-top:10%;
+		padding-top:7%;
 		box-sizing:padding-box;
 	}
 
@@ -265,6 +272,7 @@ div.@{pre}engage-trigger img {
 		width:50%;
 		height: 50%;
 		float: left;
+		margin-top: 3%;
 
 	}
 

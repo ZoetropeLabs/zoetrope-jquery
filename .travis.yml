@@ -28,6 +28,7 @@ before_script:
     - npm install
     - cd zoetrope-jquery
     - npm install
+    - gulp fetch
     - gulp
     - cd ..
     - http-server -p 8888 zoetrope-jquery/dist &

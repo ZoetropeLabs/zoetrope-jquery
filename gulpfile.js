@@ -51,6 +51,7 @@ var paths = {
 		'lib/UUID/Math.uuid.js',
 		'lib/keen/dist/keen-tracker.js',
 		'lib/detectmobilebrowser.js',
+		'lib/jquery-debounce/jquery.debounce.js',
 		'src/zoetrope.js',
 	],
 	gfi : {
@@ -385,6 +386,7 @@ gulp.task('watch', ['default'], function () {
 
 	//open the page in the users browser
 	var pageURL = 'http://localhost:' + port + '/' + gitBranch + '/test.html';
+	console.log(pageURL);
 	open(pageURL);
 
 	//gulp watch tasks
@@ -397,7 +399,7 @@ gulp.task('watch', ['default'], function () {
 	}
 	gulp.watch(gfi, ['javascript']);
 	gulp.watch('less/*', ['less']);
-	gulp.watch(paths.svgs, ['convert-images'])
+	gulp.watch(paths.svgs, ['convert-images']);
 });
 
 
