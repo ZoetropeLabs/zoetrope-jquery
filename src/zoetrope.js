@@ -84,7 +84,8 @@
 			zboxOuter : pre+'zbox-outer',
 			galleryContainer : pre+'gallery',
 			galleryImage : pre+'gallery-image',
-			hasGallery : pre+'gallery'
+			hasGallery : pre+'gallery',
+			bodyInteractive: pre+'active',
 		},
 
 		id :{
@@ -623,6 +624,8 @@
 									//make sure buttons come in when we start doing stuff
 									$this.trigger('showButtons');
 
+									$('body').addClass(zoe.cls.bodyInteractive);
+
 									state.interactive = true;
 									state.lastPanCursor = {x:x, y:y};
 									state.deltaCursor = [0, 0];
@@ -647,6 +650,7 @@
 
 									zoe.pool.unbind(evns());
 									state.interactive = false;
+									$('body').removeClass(zoe.cls.bodyInteractive);
 
 									// `state.deltaCursor` holds the last 2 deltas
 									state.velocity = (state.deltaCursor[0] + state.deltaCursor[1]) / 0.2;
