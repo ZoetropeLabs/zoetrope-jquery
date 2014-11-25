@@ -314,7 +314,8 @@
 
 
 								//bind all instance handlers
-								$this.bind(on.instance);
+								//$this.bind(on.instance);
+								errorWrappedBind($this, on.instance);
 
 								if(get('inline') && get('preload')){
 									$this.trigger('setup');
@@ -375,8 +376,8 @@
 									state.row = floor(startPosition / 36) * 30;
 									//bind global stuff
 									addInstance($this);
-									zoe.pool.bind(on.pool);
-									$(window).bind(on.window);
+									errorWrappedBind(zoe.pool, on.pool);
+									errorWrappedBind($(window), on.window);
 
 									// bind analytics
 									var analytics_events = zoe.analytics(get);
@@ -1056,7 +1057,7 @@
 									}
 									//attach resize.
 									$zboxOverlay.bind('zboxResize', on.zbox.zboxResize);
-									zoe.pool.bind('resize', $.throttle(500, function(){
+								    zoe.pool.bind('resize', $.throttle(500, function(){
 										$zboxOverlay.trigger('zboxResize');
 									}));
 								},
@@ -1072,7 +1073,7 @@
 
 									//attach events if required
 									if(!hasEvents($this))
-											$this.bind(on.instance);
+											errorWrappedBind($this, on.instance);
 
 									$zboxContent.trigger('zboxResize');
 									$this.trigger('setup');
@@ -1483,6 +1484,33 @@
 		var hasRetina = window.devicePixelRatio > 1.5,
 			mobile = $.browser.mobile;
 		return !mobile ? (hasRetina ? 1000 : 500) : (hasRetina ? 500 : 250)
+	}
+
+	function errorWrapper($this, cb){
+		var wrappedCB = function(){
+			try{
+				cb.apply(this, arguments);
+			}
+			catch(error){
+				$this.trigger('error', error);
+				throw error;
+			}
+		};
+		return wrappedCB;
+	}
+
+	/**
+	 * Pass in an object keyed on event name to wrap events in an
+	 * error logger.
+	 *
+	 * @param  jQ $element a jQuery element to attach events to
+	 * @param  object events   object of callbacks
+	 */
+	function errorWrappedBind($element, events){
+		$.each(events, function(ev, callback){
+			var wrappedCB = errorWrapper($element, callback)
+			$element.bind(ev, wrappedCB);
+		});
 	}
 
 // AMD wrapper end

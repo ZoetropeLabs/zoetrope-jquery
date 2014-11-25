@@ -96,6 +96,7 @@ var keenKeys = {
 
 var replacements = [
 	['{{branch}}', gitBranch],
+	['{{commit-sha}}', git_sha],
 	['{{cdn:url}}', cdns[gitBranch]],
 	['{{cdn:base}}', '.'],
 	['{{image-cdn:url}}', cdns.v1],

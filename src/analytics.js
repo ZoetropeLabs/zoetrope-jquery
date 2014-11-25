@@ -14,7 +14,7 @@ function(get){
             UUID: uuid,
             isMiniViewer: $.browser.mobile,
             imageSize: get('size'), // Added in v3
-            inline : get('inline'), // Also added in v3                                    
+            inline : get('inline'), // Also added in v3
         },
 
         viewID = Math.uuid(), // Pageview UUID
@@ -80,7 +80,8 @@ function(get){
                     },
                     ip_address : "${keen.ip}",
                     user_agent : "${keen.user_agent}",
-                    timestamp : new Date().getTime()
+                    timestamp : new Date().getTime(),
+                    commit : "{{commit-sha}}"
                 };
                 return globalProperties;
             };
@@ -185,7 +186,7 @@ function(get){
             pan : function(){
                 //track the change
                 var frame = frameNormaliser(state.blittedFrameIndex);
-                
+
                 if(frame != state.analytics.previousFrame){
                     state.analytics.frameTracker.push({
                         frame : frame,
@@ -260,6 +261,11 @@ function(get){
                 };
                 client.addEvent("OpenClose",closeData);
             },
+
+            error : function(e, error){
+                console.log("Error raised", error);
+                client.addEvent('error', {'errorMessage' : error.stack.toString()});
+            }
         },
 
     };
