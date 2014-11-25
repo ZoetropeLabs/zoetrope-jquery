@@ -87,7 +87,7 @@
 			hasGallery : pre+'gallery',
 			errorWrapper : pre+'error-wrapper',
 			errorIcon : pre+'error-icon',
-			errorText : pre+'error-text',
+			errorText : pre+'error-text'
 		},
 
 		id :{
@@ -129,7 +129,7 @@
 			error: '<div class="<%=zoe.cls.errorWrapper%>"> \
 						<div class="<%=zoe.cls.errorIcon%>"></div> \
 						<div class="<%=zoe.cls.errorText%>"><p><%=zoe.strs.connErr%></p></div> \
-					</div>',
+					</div>'
 		},
 
 		// language strings, `strs` will contain the active language
@@ -160,7 +160,7 @@
 			'break' : {type: 'number', init: 2500},
 			'lang': {type: 'string', init: (window.navigator.userLanguage || window.navigator.language)},
 			'size' : {type: 'enum', init: 0, options:[0,250,500,1000]},
-			'errorTimeout' : {type: 'number', init: 2000, process: false}, // error message show time
+			'errorTimeout' : {type: 'number', init: 2000, process: false} // error message show time
 		},
 
 		// The initial state of the element
@@ -187,7 +187,7 @@
 			progressPercentage : 0, //set separately for the progress bar
 			progressMax : false, // the frame to use as 100% on the preload
 			loaded : false,
-			errorTimeout : false, // Used to delay hiding the error message
+			errorTimeout : false // Used to delay hiding the error message
 		},
 
 		//pool for binding events to
@@ -1103,7 +1103,7 @@
 										$(dot(zoe.cls.zboxOuter)).css('margin','0 auto');
 
 									$zboxContent.parent().width(size);
-								},
+								}
 							},
 
 							//pool events are bound to the page
