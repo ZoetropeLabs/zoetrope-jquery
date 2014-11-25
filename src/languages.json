@@ -11,6 +11,7 @@
         "rotate": "rotate",
         "elevate": "elevate",
         "zoom": "zoom",
+        "connErr": "Cannot load, internet connection lost.",
         "changed": "31/03/2014 13:57:45"
     },
     "hi": {
@@ -25,6 +26,7 @@
         "rotate": "घुमाएँ",
         "elevate": "ऊँचा करें",
         "zoom": "ज़ूम",
+        "connErr": "Cannot load, internet connection lost.",
         "changed": "31/03/2014 14:19:24"
     },
     "fr": {
@@ -39,6 +41,7 @@
         "rotate": "Pivoter",
         "elevate": "Elever",
         "zoom": "Zoom",
+        "connErr": "Cannot load, internet connection lost.",
         "changed": "11/05/2014 15:45:58"
     },
     "de": {
@@ -53,6 +56,7 @@
         "rotate": "Drehen",
         "elevate": "Anheben",
         "zoom": "Zoomen",
+        "connErr": "Cannot load, internet connection lost.",
         "changed": "12/05/2014 20:24:15"
     },
     "it": {
@@ -67,6 +71,7 @@
         "rotate": "Girare",
         "elevate": "Alzare",
         "zoom": "Zoomare",
+        "connErr": "Cannot load, internet connection lost.",
         "changed": "12/05/2014 13:13:16"
     }
 }

@@ -80,7 +80,8 @@ function(get){
                     },
                     ip_address : "${keen.ip}",
                     user_agent : "${keen.user_agent}",
-                    timestamp : new Date().getTime()
+                    timestamp : new Date().getTime(),
+                    commit : "{{commit-sha}}"
                 };
                 return globalProperties;
             };
@@ -260,6 +261,11 @@ function(get){
                 };
                 client.addEvent("OpenClose",closeData);
             },
+
+            error : function(e, error){
+                console.log("Error raised", error);
+                client.addEvent('error', {'errorMessage' : error.stack.toString()});
+            }
         },
 
     };

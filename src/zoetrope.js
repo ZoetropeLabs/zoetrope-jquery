@@ -86,6 +86,9 @@
 			galleryImage : pre+'gallery-image',
 			hasGallery : pre+'gallery',
 			bodyInteractive: pre+'active',
+			errorWrapper : pre+'error-wrapper',
+			errorIcon : pre+'error-icon',
+			errorText : pre+'error-text'
 		},
 
 		id :{
@@ -123,7 +126,11 @@
 			zboxOverlay : '<div id="<%=zoe.id.zboxOverlay%>"></div>',
 			zboxContent : '<div class="<%=zoe.cls.zboxOuter%>"><div id="<%=zoe.id.zboxContent%>"></div></div>',
 			galleryContainer : '<div class="<%=zoe.cls.galleryContainer%>"></div>',
-			galleryImage : '<img class="<%=zoe.cls.galleryImage%>" />'
+			galleryImage : '<img class="<%=zoe.cls.galleryImage%>" />',
+			error: '<div class="<%=zoe.cls.errorWrapper%>"> \
+						<div class="<%=zoe.cls.errorIcon%>"></div> \
+						<div class="<%=zoe.cls.errorText%>"><p><%=zoe.strs.connErr%></p></div> \
+					</div>'
 		},
 
 		// language strings, `strs` will contain the active language
@@ -153,7 +160,8 @@
 			'cdn' : {type: 'string', init: '{{image-cdn:url}}'},
 			'break' : {type: 'number', init: 2500},
 			'lang': {type: 'string', init: (window.navigator.userLanguage || window.navigator.language)},
-			'size' : {type: 'enum', init: 0, options:[0,250,500,1000]}
+			'size' : {type: 'enum', init: 0, options:[0,250,500,1000]},
+			'errorTimeout' : {type: 'number', init: 2000, process: false} // error message show time
 		},
 
 		// The initial state of the element
@@ -179,7 +187,8 @@
 			preloadStartTime : 0, // start time for end time estimation
 			progressPercentage : 0, //set separately for the progress bar
 			progressMax : false, // the frame to use as 100% on the preload
-			loaded : false
+			loaded : false,
+			errorTimeout : false // Used to delay hiding the error message
 		},
 
 		//pool for binding events to
@@ -306,7 +315,8 @@
 
 
 								//bind all instance handlers
-								$this.bind(on.instance);
+								//$this.bind(on.instance);
+								errorWrappedBind($this, on.instance);
 
 								if(get('inline') && get('preload')){
 									$this.trigger('setup');
@@ -367,8 +377,8 @@
 									state.row = floor(startPosition / 36) * 30;
 									//bind global stuff
 									addInstance($this);
-									zoe.pool.bind(on.pool);
-									$(window).bind(on.window);
+									errorWrappedBind(zoe.pool, on.pool);
+									errorWrappedBind($(window), on.window);
 
 									// bind analytics
 									var analytics_events = zoe.analytics(get);
@@ -404,13 +414,17 @@
 
 											$btn.data(oddClickName, true);
 
-											var cb = $.throttle(500,true, function(e) {
+											var buttonToggle = function(e, ev) {
+												//if ev is defined, then we're dealing with a 'synthetic' event, we need to use that
+												if(typeof ev !== 'undefined'){
+													e = ev;
+												}
 												//callbacks that add the event triggering on $this
 												$this.stop(); //cancel animations
 												if($btn.data(oddClickName)){
 													$(this).addClass(zoe.cls.buttonActive);
 													//deactivate other buttons
-													$btn.siblings(dot(zoe.cls.buttonActive)).mouseup();
+													$btn.siblings(dot(zoe.cls.buttonActive)).trigger('toggle');
 													$this.trigger(name+'Start', [e]);
 												}
 												else{
@@ -419,11 +433,12 @@
 												}
 												$btn.data(oddClickName, !$btn.data(oddClickName));
 												return false;
-											});
+											};
 
 
-											$btn.bind('mouseup touchstart', cb);
-											$btn.bind('mousedown', function(){return false;})
+											$btn.bind('mouseup touchstart', $.throttle(500,true, buttonToggle));
+											$btn.bind('mousedown', function(){return false;});
+											$btn.bind('toggle', buttonToggle);
 											$buttonArea.hide()
 											$buttonArea.find(dot(zoe.cls.buttonArea)).append($btn);
 											// jQuery adds 'style="display:inline;' for some reason, but we really don't want that
@@ -509,9 +524,10 @@
 										state.currentlyLoading++;
 										var	$img = $('<img>')
 														.addClass(zoe.cls.frame).addClass(zoe.cls.frameIndicator+index)
-														.attr('src', getImageSrc(index))
 														.attr('draggable', 'false')
-														.load(function(){ $this.trigger('preload') } );
+														.load(function(){$this.trigger('preload');})
+														.error(function(){$this.trigger('showError');})
+														.attr('src', getImageSrc(index));
 										state.frames[index] = $img;
 										state.preloadProgress++;
 										index = getNextIndex(state);
@@ -729,6 +745,39 @@
 									$this.unbind('showButtons');
 								},
 
+								// Shows an error message.
+								showError : function(){
+									var state = get('state');
+
+									//show message
+									if(!$(dot(zoe.cls.errorWrapper), $this).length){
+										var $err = tmpl(zoe.html.error);
+										// prevent events firing while message is showing
+										$err.bind('touchstart mousedown', function(){
+											return false;
+										});
+										$this.append($err);
+									}
+
+									var timeout = get('errorTimeout');
+
+									if(!state.loaded && !state.errorTimeout){
+										//if not loaded yet, we need to bail
+										state.errorTimeout = setTimeout(function(){$this.unZoetrope();}, timeout);
+									}
+									else if(!state.errorTimeout){
+										state.errorTimeout = setTimeout(function(){$this.trigger('hideError');}, timeout);
+										// toggle off the mouse button
+										$(dot(pre+'btn-zoom', $this)).trigger('toggle');
+									}
+								},
+
+								hideError : function(){
+									var state = get('state');
+									$this.find(dot(zoe.cls.errorWrapper)).remove();
+									state.errorTimeout = false;
+								},
+
 								helpSetup: function(){
 									var sections = [],
 										tiles = ['rotate', 'elevate', 'zoom', 'brand'];
@@ -741,8 +790,11 @@
 										};
 										if(name == 'brand'){
 											settings.text = $('<a>').text(zoe.brandShort).attr('href', zoe.helpLink)[0].outerHTML;
-											settings.image = $('<a>').addClass(zoe.cls.helpImage).text(zoe.brand)
-																		.attr('title', zoe.brand).attr('href', zoe.helpLink)[0].outerHTML;
+											settings.image = $('<a>').addClass(zoe.cls.helpImage)
+																	 .text(zoe.brand)
+																	 .attr('title', zoe.brand)
+																	 .attr('target', '_blank')
+																	 .attr('href', zoe.helpLink)[0].outerHTML;
 										}
 										sections.push(settings);
 									}
@@ -830,10 +882,10 @@
 										}
 
 										if (scale > 1 && !state.zoomed) {
-											$this.find(dot(pre+'btn-zoom')).mouseup();
+											$this.find(dot(pre+'btn-zoom')).trigger('toggle', e);
 										}
 										else if(state.zoomed && scale < 1){
-											$this.find(dot(pre+'btn-zoom')).mouseup();
+											$this.find(dot(pre+'btn-zoom')).trigger('toggle', e);
 										}
 										e.preventDefault();
 									}
@@ -857,9 +909,12 @@
 
 									//add the image to zoom
 									$('<img>')
-										.attr('src', zoomUrl)
 										.addClass(zoe.cls.zoomFrame)
-										.appendTo($zoomDiv);
+										.appendTo($zoomDiv)
+										.error(function(){
+											$this.trigger('showError')
+										})
+										.attr('src', zoomUrl);
 
 									//show the zoom div
 									$zoomDiv.stop().css('display', 'block').fadeTo(100, 1);
@@ -869,16 +924,19 @@
 									$zoomDiv.bind(evns(['mouseenter'],'zoom'), enter);
 
 									if (isTouchEvent(ev)) {
-										$zoomDiv.bind(evns(['touchmove'], 'zoom'), invertedMove);
+										//zoom out handlers
+										$zoomDiv.bind(evns('touchstart', 'zoomout'), on.instance['touchstart.zoom']);
+										$zoomDiv.bind(evns('touchmove', 'zoomout'), on.instance['touchmove.zoom']);
+										$zoomDiv.bind(evns('touchend', 'zoomout'), on.instance['touchend.zoom']);
+										//get stating positions if using touch
+										$zoomDiv.bind(evns('touchstart', 'zoom'), startLocation);
+										$zoomDiv.bind(evns('touchmove', 'zoom'), invertedMove);
 									}
-									else {	
+									else {
 										$zoomDiv.bind(evns(['mousemove'], 'zoom'), move);
 									}
 									//prevent touches effecting position
 									$zoomDiv.bind(evns('mousedown', 'capture'), capture);
-
-									//get stating positions if using touch
-									$zoomDiv.bind(evns('touchstart', 'zoom'), startLocation);
 
 									//move to the buttons zoom position
 									$this.trigger('zoomMove', [size/2, size/2, false]);
@@ -886,7 +944,11 @@
 									state.zoomed = true;
 
 									function move(e){var offset = $this.offset(); $this.trigger('zoomMove', [pointer(e).pageX - offset.left, pointer(e).pageY - offset.top, false, e]); return false;}
-									function invertedMove(e){ var offset = state.zoomTouchStartCords; $this.trigger('zoomMove', [pointer(e).pageX - offset.pageX, pointer(e).pageY - offset.pageY, true, e]); return false;}
+									function invertedMove(e){
+										var offset = state.zoomTouchStartCords;
+										$this.trigger('zoomMove', [pointer(e).pageX - offset.pageX, pointer(e).pageY - offset.pageY, true, e]);
+										return false;
+									}
 									function leave(){ $this.trigger('zoomLeave'); return false; }
 									function enter(){ $this.trigger('zoomEnter'); return false; }
 									function capture(){ return false;}
@@ -905,6 +967,7 @@
 										$zoomDiv.css('display', 'none').empty(); // Delete the zoom image
 									});
 									$this.unbind(evns(false,'zoom'));
+									$this.unbind(evns(false,'zoomout'));
 									state.zoomed = false;
 								},
 
@@ -996,6 +1059,11 @@
 										$('body').append($zboxOverlay);
 										$zboxContent.click(function(){return false;}); //isolate child from propogating clicks
 									}
+									//attach resize.
+									$zboxOverlay.bind('zboxResize', on.zbox.zboxResize);
+								    zoe.pool.bind('resize', $.throttle(500, function(){
+										$zboxOverlay.trigger('zboxResize');
+									}));
 								},
 								'open': function(ev){
 									var $zboxOverlay = $(hash(zoe.id.zboxOverlay)),
@@ -1009,12 +1077,9 @@
 
 									//attach events if required
 									if(!hasEvents($this))
-											$this.bind(on.instance);
+											errorWrappedBind($this, on.instance);
 
-									if ($zboxContent.height() >= $(window).height())
-										$(dot(zoe.cls.zboxOuter)).css('margin','0 auto');
-
-
+									$zboxContent.trigger('zboxResize');
 									$this.trigger('setup');
 								},
 								'close': function(ev){
@@ -1034,6 +1099,15 @@
 									});
 									$('embed.unhideThis, object.unhideThis').removeClass(zoe.cls.overlayUnhide).css('visibility', 'visible');
 								},
+								zboxResize : function(){
+									var size = min(zoe.pool.height(), zoe.pool.width()),
+										$zboxContent = $(hash(zoe.id.zboxContent));
+
+									if ($zboxContent.height() >= zoe.pool.height())
+										$(dot(zoe.cls.zboxOuter)).css('margin','0 auto');
+
+									$zboxContent.parent().width(size);
+								}
 							},
 
 							//pool events are bound to the page
@@ -1276,7 +1350,7 @@
 	// Returns false for old versions of IE.
 	function zoeCompatible(){
 		var browserDetails = browser();
-		if(browserDetails[0] == "MSIE" && (+browserDetails[1]) <= 6)
+		if(browserDetails[0] == "MSIE" && (+browserDetails[1]) <= 9)
 			return false;
 		return true;
 	}
@@ -1414,6 +1488,33 @@
 		var hasRetina = window.devicePixelRatio > 1.5,
 			mobile = $.browser.mobile;
 		return !mobile ? (hasRetina ? 1000 : 500) : (hasRetina ? 500 : 250)
+	}
+
+	function errorWrapper($this, cb){
+		var wrappedCB = function(){
+			try{
+				cb.apply(this, arguments);
+			}
+			catch(error){
+				$this.trigger('error', error);
+				throw error;
+			}
+		};
+		return wrappedCB;
+	}
+
+	/**
+	 * Pass in an object keyed on event name to wrap events in an
+	 * error logger.
+	 *
+	 * @param  jQ $element a jQuery element to attach events to
+	 * @param  object events   object of callbacks
+	 */
+	function errorWrappedBind($element, events){
+		$.each(events, function(ev, callback){
+			var wrappedCB = errorWrapper($element, callback)
+			$element.bind(ev, wrappedCB);
+		});
 	}
 
 // AMD wrapper end
