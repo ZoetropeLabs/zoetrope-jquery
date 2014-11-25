@@ -188,7 +188,8 @@
 			progressPercentage : 0, //set separately for the progress bar
 			progressMax : false, // the frame to use as 100% on the preload
 			loaded : false,
-			errorTimeout : false // Used to delay hiding the error message
+			errorTimeout : false, // Used to delay hiding the error message
+			events : {}
 		},
 
 		//pool for binding events to
@@ -315,7 +316,6 @@
 
 
 								//bind all instance handlers
-								//$this.bind(on.instance);
 								errorWrappedBind($this, on.instance);
 
 								if(get('inline') && get('preload')){
@@ -329,15 +329,18 @@
 
 								//destroy the instance
 								'teardown.zoetrope' : function(){
+									var state = get('state');
 									$this.stop(true, true);
-									zoe.pool.unbind(on.pool);
-									$(window).unbind(on.window);
+									zoe.pool.unbind(state.events.pool);
+									$(window).unbind(state.events.window);
+									removeInstance($this);
 									// replace with the original markup, copy
 									// data over.
 									var dataCache = $original.data();
 									var $newThis = $original.clone(true);
 									$newThis.data(dataCache);
 									$this.replaceWith($newThis);
+									$this.remove();
 									$this = $newThis;
 								},
 
@@ -377,8 +380,8 @@
 									state.row = floor(startPosition / 36) * 30;
 									//bind global stuff
 									addInstance($this);
-									errorWrappedBind(zoe.pool, on.pool);
-									errorWrappedBind($(window), on.window);
+									state.events.pool = errorWrappedBind(zoe.pool, on.pool);
+									state.events.window = errorWrappedBind($(window), on.window);
 
 									// bind analytics
 									var analytics_events = zoe.analytics(get);
@@ -1518,10 +1521,13 @@
 	 * @param  object events   object of callbacks
 	 */
 	function errorWrappedBind($element, events){
+		var attachedEvents = {};
 		$.each(events, function(ev, callback){
 			var wrappedCB = errorWrapper($element, callback)
+			attachedEvents[ev] = callback;
 			$element.bind(ev, wrappedCB);
 		});
+		return attachedEvents;
 	}
 
 // AMD wrapper end
