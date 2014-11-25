@@ -1059,6 +1059,9 @@
 										$('body').append($zboxOverlay);
 										$zboxContent.click(function(){return false;}); //isolate child from propogating clicks
 									}
+									else{
+										var $zboxOverlay = $(hash(zoe.id.zboxOverlay));
+									}
 									//attach resize.
 									$zboxOverlay.bind('zboxResize', on.zbox.zboxResize);
 								    zoe.pool.bind('resize', $.throttle(500, function(){
