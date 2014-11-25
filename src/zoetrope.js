@@ -1059,6 +1059,9 @@
 										$('body').append($zboxOverlay);
 										$zboxContent.click(function(){return false;}); //isolate child from propogating clicks
 									}
+									else{
+										var $zboxOverlay = $(hash(zoe.id.zboxOverlay));
+									}
 									//attach resize.
 									$zboxOverlay.bind('zboxResize', on.zbox.zboxResize);
 								    zoe.pool.bind('resize', $.throttle(500, function(){
@@ -1397,9 +1400,13 @@
 	}
 	function dataPrefix(name){
 		// since pre jquery 1.6 doesnt support lower camelcase -> html 5 attr,
-		// do the conversion here.
-		var dashed = name.replace(/[A-Z]/, function(v) { return '-' + v.toLowerCase(); });
-		return ('zoe-' + dashed) || '';
+		// do the conversion here, if sub 1.6.
+		var version = $ && $().jquery.split(/\./);
+		if (!version || +(twochar(version[0])+twochar(version[1])+twochar(version[2] || '')) < 10600){
+			var dashed = name.replace(/[A-Z]/, function(v) { return '-' + v.toLowerCase(); });
+			return ('zoe-' + dashed) || '';
+		}
+		return ('zoe' + name.charAt(0).toUpperCase() + name.slice(1)) || '';
 	}
 
 	function hasTouch(){
