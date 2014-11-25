@@ -523,7 +523,8 @@
 										var	$img = $('<img>')
 														.addClass(zoe.cls.frame).addClass(zoe.cls.frameIndicator+index)
 														.attr('draggable', 'false')
-														.load(function(){ $this.trigger('preload') } )
+														.load(function(){$this.trigger('preload');})
+														.error(function(){$this.trigger('showError');})
 														.attr('src', getImageSrc(index));
 										state.frames[index] = $img;
 										state.preloadProgress++;
