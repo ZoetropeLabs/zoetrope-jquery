@@ -1346,7 +1346,7 @@
 	// Returns false for old versions of IE.
 	function zoeCompatible(){
 		var browserDetails = browser();
-		if(browserDetails[0] == "MSIE" && (+browserDetails[1]) <= 6)
+		if(browserDetails[0] == "MSIE" && (+browserDetails[1]) <= 9)
 			return false;
 		return true;
 	}
