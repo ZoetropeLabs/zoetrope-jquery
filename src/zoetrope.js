@@ -412,13 +412,17 @@
 
 											$btn.data(oddClickName, true);
 
-											var buttonToggle = function(e) {
+											var buttonToggle = function(e, ev) {
+												//if ev is defined, then we're dealing with a 'synthetic' event, we need to use that
+												if(typeof ev !== 'undefined'){
+													e = ev;
+												}
 												//callbacks that add the event triggering on $this
 												$this.stop(); //cancel animations
 												if($btn.data(oddClickName)){
 													$(this).addClass(zoe.cls.buttonActive);
 													//deactivate other buttons
-													$btn.siblings(dot(zoe.cls.buttonActive)).mouseup();
+													$btn.siblings(dot(zoe.cls.buttonActive)).trigger('toggle');
 													$this.trigger(name+'Start', [e]);
 												}
 												else{
@@ -872,10 +876,10 @@
 										}
 
 										if (scale > 1 && !state.zoomed) {
-											$this.find(dot(pre+'btn-zoom')).mouseup();
+											$this.find(dot(pre+'btn-zoom')).trigger('toggle', e);
 										}
 										else if(state.zoomed && scale < 1){
-											$this.find(dot(pre+'btn-zoom')).mouseup();
+											$this.find(dot(pre+'btn-zoom')).trigger('toggle', e);
 										}
 										e.preventDefault();
 									}
@@ -914,7 +918,13 @@
 									$zoomDiv.bind(evns(['mouseenter'],'zoom'), enter);
 
 									if (isTouchEvent(ev)) {
-										$zoomDiv.bind(evns(['touchmove'], 'zoom'), invertedMove);
+										//zoom out handlers
+										$zoomDiv.bind(evns('touchstart', 'zoomout'), on.instance['touchstart.zoom']);
+										$zoomDiv.bind(evns('touchmove', 'zoomout'), on.instance['touchmove.zoom']);
+										$zoomDiv.bind(evns('touchend', 'zoomout'), on.instance['touchend.zoom']);
+										//get stating positions if using touch
+										$zoomDiv.bind(evns('touchstart', 'zoom'), startLocation);
+										$zoomDiv.bind(evns('touchmove', 'zoom'), invertedMove);
 									}
 									else {
 										$zoomDiv.bind(evns(['mousemove'], 'zoom'), move);
@@ -922,16 +932,17 @@
 									//prevent touches effecting position
 									$zoomDiv.bind(evns('mousedown', 'capture'), capture);
 
-									//get stating positions if using touch
-									$zoomDiv.bind(evns('touchstart', 'zoom'), startLocation);
-
 									//move to the buttons zoom position
 									$this.trigger('zoomMove', [size/2, size/2, false]);
 
 									state.zoomed = true;
 
 									function move(e){var offset = $this.offset(); $this.trigger('zoomMove', [pointer(e).pageX - offset.left, pointer(e).pageY - offset.top, false, e]); return false;}
-									function invertedMove(e){ var offset = state.zoomTouchStartCords; $this.trigger('zoomMove', [pointer(e).pageX - offset.pageX, pointer(e).pageY - offset.pageY, true, e]); return false;}
+									function invertedMove(e){
+										var offset = state.zoomTouchStartCords;
+										$this.trigger('zoomMove', [pointer(e).pageX - offset.pageX, pointer(e).pageY - offset.pageY, true, e]);
+										return false;
+									}
 									function leave(){ $this.trigger('zoomLeave'); return false; }
 									function enter(){ $this.trigger('zoomEnter'); return false; }
 									function capture(){ return false;}
@@ -950,6 +961,7 @@
 										$zoomDiv.css('display', 'none').empty(); // Delete the zoom image
 									});
 									$this.unbind(evns(false,'zoom'));
+									$this.unbind(evns(false,'zoomout'));
 									state.zoomed = false;
 								},
 
