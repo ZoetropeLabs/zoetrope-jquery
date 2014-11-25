@@ -70,6 +70,8 @@
 	user-select: none;
 	-moz-user-select: none;
 	-webkit-user-select: none;
+	-ms-user-select: none;
+	-khtml-user-select: none;
 }
 
 .border-radius (@radius: 7.5px) {
@@ -88,6 +90,11 @@
 //---------------------------------------
 // Styles
 //---------------------------------------
+
+// Zoetrope body class
+body.@{pre}active{
+	.no-select();
+}
 
 /* trigger link */
 .@{pre}engage-trigger, .@{pre}engage-trigger:focus{

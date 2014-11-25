@@ -39,7 +39,9 @@ script:
     - protractor testSuite.conf.js
 
 after_success:
-    - if [[$TRAVIS_BRANCH == 'v3']]; then ../travis_deploy_zoetrope.sh; fi
+    - cd ..
+    - chmod +x zoetrope-jquery/travis_deploy_zoetrope.sh
+    - if [[ "$TRAVIS_BRANCH" == "v3" ]]; then bash -x zoetrope-jquery/travis_deploy_zoetrope.sh; fi
 
 after_failure:
     - chmod 600 ~/.ssh/id_ci_github
