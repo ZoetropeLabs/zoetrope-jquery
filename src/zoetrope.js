@@ -1524,7 +1524,7 @@
 		var attachedEvents = {};
 		$.each(events, function(ev, callback){
 			var wrappedCB = errorWrapper($element, callback)
-			attachedEvents[ev] = callback;
+			attachedEvents[ev] = wrappedCB;
 			$element.bind(ev, wrappedCB);
 		});
 		return attachedEvents;
