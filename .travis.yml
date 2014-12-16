@@ -14,7 +14,8 @@ before_install:
         -in id_ci_github.enc -out ~/.ssh/id_ci_github -d
 
 install:
-    - npm update
+    - npm update -g
+    - npm --version
     - sudo apt-get update -qq
     - sudo apt-get install -y graphicsmagick
     - cd ..
