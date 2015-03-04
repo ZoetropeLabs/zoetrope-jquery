@@ -1,6 +1,8 @@
 function(get){
     var state = get('state'),
         uuid = get('image'),
+        useGA = get('googleAnalytics'),
+        gaObject = window.ga,
         startPosition = get('startPosition'),
         frameNormaliser = function(index){return index * (36 / state.colCount);},
         openTime,
@@ -179,6 +181,11 @@ function(get){
                     OpenEndTime: state.analytics.loadEnd,
                     OpenLoadTime: state.analytics.loadEnd - state.analytics.loadStart,
                 };
+                client.addEvent("OpenClose", openData);
+
+                if (useGA) {
+                    gaObject('send', 'event', 'zoetrope-viewer', 'loaded', 'timeToLoadSeconds', Math.round(openData.OpenLoadTime/1000), {'nonInteraction': 1});
+                }
             },
 
 
@@ -203,8 +210,11 @@ function(get){
                             stopFrame: frame,
                             frameTracker: state.analytics.frameTracker,
                         };
-                        console.log(state.analytics.frameTracker);
                         client.addEvent("viewChange", viewData);
+                        if (useGA) {
+                            gaObject('send', 'event', 'zoetrope-viewer', 'pan', 'startFrame', viewData.startFrame);
+                            gaObject('send', 'event', 'zoetrope-viewer', 'pan', 'stopFrame', viewData.stopFrame);
+                        }
                         state.analytics.startFrame = frame;
                     }
                     state.analytics.frameTracker = [];
@@ -216,6 +226,9 @@ function(get){
                     zoomState: true,
                 };
                 client.addEvent("zoom", zoomData);
+                if (useGA) {
+                    gaObject('send', 'event', 'zoetrope-viewer', 'zoomIn' );
+                }
             },
             zoomMove : function(e, x, y){
                 if(!state.zoomUpdated) return;
@@ -234,6 +247,10 @@ function(get){
                     state.analytics.zoomTracker.trackingData = [];
                 });
                 client.addEvent("zoom", zoomData);
+
+                if (useGA) {
+                    gaObject('send', 'event', 'zoetrope-viewer', 'zoomOut' );
+                }
             },
 
             helpStart : function(){
@@ -242,6 +259,9 @@ function(get){
                 };
                 state.analytics.helpOpenTime = +new Date();
                 client.addEvent("help", helpData);
+                if (useGA) {
+                    gaObject('send', 'event', 'zoetrope-viewer', 'viewHelp' );
+                }
             },
 
             helpEnd : function(){
@@ -250,6 +270,9 @@ function(get){
                     helpDuration : +new Date() - state.analytics.helpOpenTime,
                 };
                 client.addEvent("help", helpData);
+                if (useGA) {
+                    gaObject('send', 'event', 'zoetrope-viewer', 'exitHelp' );
+                }
             },
 
             //called when the close button is pressed
@@ -260,6 +283,10 @@ function(get){
                     timeOpen: timeNow - state.analytics.loadEnd,
                 };
                 client.addEvent("OpenClose",closeData);
+                if (useGA) {
+                    gaObject('send', 'event', 'zoetrope-viewer', 'close' );
+                }
+
             },
 
             error : function(e, error){

@@ -161,7 +161,8 @@
 			'break' : {type: 'number', init: 2500},
 			'lang': {type: 'string', init: (window.navigator.userLanguage || window.navigator.language)},
 			'size' : {type: 'enum', init: 0, options:[0,250,500,1000]},
-			'errorTimeout' : {type: 'number', init: 2000, process: false} // error message show time
+			'errorTimeout' : {type: 'number', init: 2000, process: false}, // error message show time
+			'googleAnalytics' : {init: false},
 		},
 
 		// The initial state of the element
@@ -267,6 +268,7 @@
 								$wrapper = tmpl(zoe.html.widget);
 								$wrapper.data(data);
 
+								
 
 								//normal - load with page
 								if(get('inline')){
