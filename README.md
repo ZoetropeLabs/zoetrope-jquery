@@ -19,6 +19,7 @@ We're working on a set of examples to demonstrate what can be done with the Zoet
 git clone https://github.com/ZoetropeImaging/zoetrope-jquery.git
 cd zoetrope-jquery
 sudo npm install .
+gulp fetch
 gulp
 ```
 
