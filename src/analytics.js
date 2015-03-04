@@ -169,7 +169,7 @@ function(get){
 
         // Events which should be called on widget actions
         on: {
-            setup : function(){
+            'analytics.setup' : function(){
                 state.analytics.loadStart = +new Date();
             },
             preloadEnd : function(){
