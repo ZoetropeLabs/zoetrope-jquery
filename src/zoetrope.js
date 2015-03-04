@@ -389,6 +389,8 @@
 										$this.bind(evns(key, 'analytics'), ev);
 									})
 
+									$this.trigger('analytics.setup')
+
 
 									if(get('buttons')){
 										// Add button container.
