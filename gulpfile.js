@@ -54,6 +54,9 @@ var paths = {
 		'lib/jquery-debounce/jquery.debounce.js',
 		'src/zoetrope.js',
 	],
+	googleAnalytics: [
+		'src/zoetrope-google-analytics.js'
+	],
 	gfi : {
 		"/* languages.json */" : 'src/languages.json',
 		"/* analytics.js */": 'src/analytics.js',
@@ -323,6 +326,32 @@ gulp.task('javascript', function () {
 		.pipe(gulp.dest(paths.dist + '/js'));
 });
 
+gulp.task('google-analytics-js', function () {
+	var comment_preserve = function (node, comment) {
+		return /Zoetrope Ltd/i.test(comment.value);
+	};
+	var submodule_name = module_name +'-google-analytics';
+
+	return gulp.src(paths.googleAnalytics)
+		.pipe(concat(submodule_name + '.js'))
+		.pipe(wrap('/* COPYRIGHT Zoetrope Ltd 2014. Build: ' + git_sha + ' */\n!(function(){<%= contents %>})();')) //wrap in function to keep global NS clean
+		.pipe(gulp.dest(paths.dist + '/js'))
+		.pipe(uglify({
+			compress: {
+				drop_console: true
+			},
+			preserveComments: comment_preserve
+		}).on('error', function(e) { console.log('\x07',e.message); console.log(e); return this.end(); }))
+		.pipe(rename(submodule_name+'.min.uncomp.js'))
+		.pipe(gulp.dest(paths.dist + '/js'))
+		.pipe(gzip())
+		.pipe(size({
+			showFiles:true
+		}))
+		.pipe(rename(submodule_name + '.min.js.gz'))
+		.pipe(gulp.dest(paths.dist + '/js'));
+});
+
 gulp.task('test', ['default'], function () {
 	//set up http server
 	var server = http.createServer(
@@ -402,13 +431,14 @@ gulp.task('watch', ['default'], function () {
 	gulp.watch(gfi, ['javascript']);
 	gulp.watch('less/*', ['less']);
 	gulp.watch(paths.svgs, ['convert-images']);
+	gulp.watch(paths.googleAnalytics, ['google-analytics-js']);
 });
 
 
 // Get some language strings etc
 gulp.task('fetch', ['detect-mobile','lang-strings', 'build-keen']);
 
-gulp.task('build-all', ['less', 'javascript', 'html']);
+gulp.task('build-all', ['less', 'javascript', 'html', 'google-analytics-js']);
 
 // The default task (called when you run `gulp` from cli)
 gulp.task('default', ['build-all']);
