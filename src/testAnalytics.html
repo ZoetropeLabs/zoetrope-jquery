@@ -18,11 +18,17 @@
 
 		ga('create', 'UA-45970762-3', 'none');
 		ga('send', 'pageview');
-		ga('send', 'event', 'zoetrope-viewer', 'open');
 	</script>
 
 	<script src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
+	<script src="js/zoetrope.jquery-google-analytics.js"></script>
+	<script>
+		$.zoeGA(window.ga);
+	</script>
+
 	<script src="js/zoetrope.jquery.js"></script>
+
+
 	<link rel="stylesheet" type="text/css" href="css/zoetrope.jquery.min.css">
 </head>
 

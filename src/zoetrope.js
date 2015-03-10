@@ -389,7 +389,7 @@
 										$this.bind(evns(key, 'analytics'), ev);
 									})
 
-									$this.trigger('analytics.setup')
+									$this.trigger(evns('setup', 'analytics'));
 
 
 									if(get('buttons')){
